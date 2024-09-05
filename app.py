@@ -7,18 +7,19 @@ import pandas as pd
 import plotly.graph_objs as go
 from decimal import Decimal, InvalidOperation
 from typing import Dict, List, Tuple
-import math
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
 
 class TransactionProcessor:
+    """Processes and manages financial transactions."""
+
     def __init__(self):
         self.processed_transactions: Dict[str, Dict[str, List[Dict]]] = {}
         self.bad_transactions: List[Dict] = []
 
-    def generate_chart_of_accounts(self):
+    def generate_chart_of_accounts(self) -> str:
         """Generate a formatted chart of accounts."""
         chart = []
         for account, cards in self.processed_transactions.items():
@@ -29,14 +30,32 @@ class TransactionProcessor:
             chart.append(account_info)
         return "\n".join(chart)
 
-    def get_account_transactions(self, account: str, card: str):
-        """Get all transactions for a specific account and card."""
+    def get_account_transactions(self, account: str, card: str) -> List[Dict]:
+        """
+        Get all transactions for a specific account and card.
+
+        Args:
+            account (str): The account name.
+            card (str): The card number.
+
+        Returns:
+            List[Dict]: A list of transactions for the specified account and card.
+        """
         if account not in self.processed_transactions or card not in self.processed_transactions[account]:
             return []
         return self.processed_transactions[account][card]
 
     def export_transactions_txt(self, account: str, card: str) -> str:
-        """Export transactions for a specific account and card as a text string."""
+        """
+        Export transactions for a specific account and card as a text string.
+
+        Args:
+            account (str): The account name.
+            card (str): The card number.
+
+        Returns:
+            str: A formatted string containing transaction details.
+        """
         transactions = self.get_account_transactions(account, card)
         output = f"Transactions for Account: {account}, Card: {card}\n\n"
         for t in transactions:
@@ -44,7 +63,16 @@ class TransactionProcessor:
         return output
 
     def export_transactions_pdf(self, account: str, card: str) -> str:
-        """Export transactions for a specific account and card as a PDF."""
+        """
+        Export transactions for a specific account and card as a PDF.
+
+        Args:
+            account (str): The account name.
+            card (str): The card number.
+
+        Returns:
+            str: Base64 encoded PDF content.
+        """
         transactions = self.get_account_transactions(account, card)
         buffer = io.BytesIO()
         doc = SimpleDocTemplate(buffer, pagesize=letter)
@@ -80,13 +108,20 @@ class TransactionProcessor:
         return base64.b64encode(pdf).decode('utf-8')
 
     def export_person_transactions(self, person: str) -> str:
-        """Export all transactions for a specific person, including all their cards."""
+        """
+        Export all transactions for a specific person, including all their cards.
+
+        Args:
+            person (str): The person's name.
+
+        Returns:
+            str: Base64 encoded PDF content.
+        """
         buffer = io.BytesIO()
         doc = SimpleDocTemplate(buffer, pagesize=letter, topMargin=50, bottomMargin=50, leftMargin=50, rightMargin=50)
         elements = []
         styles = getSampleStyleSheet()
         
-        # Add a title
         elements.append(Paragraph(f"Transaction Report for {person}", styles['Title']))
         elements.append(Spacer(1, 20))
         
@@ -101,7 +136,6 @@ class TransactionProcessor:
                 for t in transactions:
                     data.append([f"${t['amount']:.2f}", t['type'], t['description']])
                 
-                # Calculate column widths
                 col_widths = [doc.width/4, doc.width/4, doc.width/2]
                 
                 table = Table(data, colWidths=col_widths)
@@ -124,11 +158,9 @@ class TransactionProcessor:
                 elements.append(table)
                 elements.append(Spacer(1, 20))
 
-            # Add a summary
             total_balance = sum(sum(t['amount'] for t in transactions) for transactions in self.processed_transactions[person].values())
             elements.append(Paragraph(f"Total Balance: ${total_balance:.2f}", styles['Heading2']))
 
-        # Add page numbers
         def add_page_number(canvas, doc):
             page_num = canvas.getPageNumber()
             text = f"Page {page_num}"
@@ -139,8 +171,13 @@ class TransactionProcessor:
         buffer.close()
         return base64.b64encode(pdf).decode('utf-8')
 
-    def get_accounts_for_collections(self):
-        """Identify accounts that need to go to collections."""
+    def get_accounts_for_collections(self) -> List[str]:
+        """
+        Identify accounts that need to go to collections.
+
+        Returns:
+            List[str]: A list of accounts with negative balances.
+        """
         collections = []
         for account, cards in self.processed_transactions.items():
             for card, transactions in cards.items():
@@ -149,14 +186,21 @@ class TransactionProcessor:
                     collections.append(f"Account: {account}, Card: {card}, Balance: ${balance:.2f}")
         return collections
 
-    def generate_balance_chart(self, top_n: int = 20):
-        """Generate a bar chart of account balances for the top N accounts."""
+    def generate_balance_chart(self, top_n: int = 20) -> go.Figure:
+        """
+        Generate a bar chart of account balances for the top N accounts.
+
+        Args:
+            top_n (int): Number of top accounts to display.
+
+        Returns:
+            go.Figure: A plotly Figure object representing the balance chart.
+        """
         account_balances = []
         for account, cards in self.processed_transactions.items():
             total_balance = sum(sum(t['amount'] for t in transactions) for transactions in cards.values())
             account_balances.append((account, total_balance))
         
-        # Sort by absolute balance and get top N
         top_accounts = sorted(account_balances, key=lambda x: abs(x[1]), reverse=True)[:top_n]
         
         accounts = [f"{account} (Total)" for account, _ in top_accounts]
@@ -178,10 +222,10 @@ class TransactionProcessor:
         Process a single transaction and update the processed_transactions dictionary.
         
         Args:
-        row (pd.Series): A row from the transaction DataFrame
+            row (pd.Series): A row from the transaction DataFrame.
         
         Returns:
-        Tuple[bool, str]: A tuple containing a boolean indicating success and an error message if applicable
+            Tuple[bool, str]: A tuple containing a boolean indicating success and an error message if applicable.
         """
         try:
             account_name = row['Account Name']
@@ -214,12 +258,12 @@ class TransactionProcessor:
         except Exception as e:
             return False, f"Unexpected error: {str(e)}"
 
-    def process_transactions(self, df: pd.DataFrame):
+    def process_transactions(self, df: pd.DataFrame) -> None:
         """
         Process all transactions in the DataFrame.
         
         Args:
-        df (pd.DataFrame): The DataFrame containing all transactions
+            df (pd.DataFrame): The DataFrame containing all transactions.
         """
         for _, row in df.iterrows():
             success, error_message = self.process_transaction(row)
@@ -229,7 +273,7 @@ class TransactionProcessor:
                     'error': error_message
                 })
 
-    def reset(self):
+    def reset(self) -> None:
         """Reset the processor state."""
         self.processed_transactions.clear()
         self.bad_transactions.clear()
@@ -239,18 +283,17 @@ def parse_csv(contents: str, filename: str) -> Tuple[pd.DataFrame, List[str]]:
     Parse the contents of a CSV file, handling potential issues.
     
     Args:
-    contents (str): The contents of the uploaded file
-    filename (str): The name of the uploaded file
+        contents (str): The contents of the uploaded file.
+        filename (str): The name of the uploaded file.
     
     Returns:
-    Tuple[pd.DataFrame, List[str]]: A tuple containing the parsed DataFrame and a list of warnings/errors
+        Tuple[pd.DataFrame, List[str]]: A tuple containing the parsed DataFrame and a list of warnings/errors.
     """
     content_type, content_string = contents.split(',')
     decoded = base64.b64decode(content_string)
     warnings = []
     
     try:
-        # Read the CSV file, handling trailing commas and no header
         df = pd.read_csv(
             io.StringIO(decoded.decode('utf-8')),
             header=None,
@@ -261,10 +304,8 @@ def parse_csv(contents: str, filename: str) -> Tuple[pd.DataFrame, List[str]]:
             skipinitialspace=True
         )
         
-        # Remove empty columns (caused by trailing commas)
         df = df.dropna(how='all', axis=1)
         
-        # Check for empty values in required columns
         required_columns = ['Account Name', 'Card Number', 'Transaction Amount', 'Transaction Type']
         for col in required_columns:
             empty_count = df[col].isna().sum()
@@ -276,7 +317,7 @@ def parse_csv(contents: str, filename: str) -> Tuple[pd.DataFrame, List[str]]:
         return pd.DataFrame(), [f"There was an error processing this file: {str(e)}"]
 
 # Initialize the Dash app and TransactionProcessor
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.FLATLY], title="Transactions")
 processor = TransactionProcessor()
 
 # Define the layout
@@ -339,7 +380,6 @@ app.layout = dbc.Container([
     dcc.Download(id="download-person-pdf"),
 ], fluid=True)
 
-# Callback for file upload and reset
 @app.callback(
     [Output('output-data-upload', 'children'),
      Output('balance-chart', 'figure'),
@@ -351,6 +391,19 @@ app.layout = dbc.Container([
      State('upload-data', 'last_modified')]
 )
 def update_output(content, reset_clicks, name, date):
+    """
+    Callback function to handle file upload and reset actions.
+
+    Args:
+        content: The content of the uploaded file.
+        reset_clicks: Number of times the reset button has been clicked.
+        name: Name of the uploaded file.
+        date: Last modified date of the uploaded file.
+
+    Returns:
+        Tuple containing updated children for output-data-upload, balance chart figure,
+        upload-data contents, and person-dropdown options.
+    """
     ctx = dash.callback_context
     if not ctx.triggered:
         return dash.no_update, dash.no_update, dash.no_update, dash.no_update
@@ -380,13 +433,22 @@ def update_output(content, reset_clicks, name, date):
 
     return dash.no_update, dash.no_update, dash.no_update, dash.no_update
 
-# Callback for exporting all transactions for a person as PDF
 @app.callback(
     Output("download-person-pdf", "data"),
     [Input("export-person-pdf-button", "n_clicks")],
     [State('person-dropdown', 'value')]
 )
 def export_person_pdf(n_clicks, person):
+    """
+    Callback function to export all transactions for a person as PDF.
+
+    Args:
+        n_clicks: Number of times the export button has been clicked.
+        person: Selected person from the dropdown.
+
+    Returns:
+        Dict containing filename and content of the PDF to be downloaded.
+    """
     if n_clicks is None or not person:
         return dash.no_update
     content = processor.export_person_transactions(person)
