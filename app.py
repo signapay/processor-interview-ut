@@ -1,15 +1,21 @@
 import dash
 from dash import html, dcc, Input, Output, State
+import dash_bootstrap_components as dbc
 import base64
 import io
 import pandas as pd
 import plotly.graph_objs as go
 from decimal import Decimal, InvalidOperation
 from typing import Dict, List, Tuple
+import math
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
 
 class TransactionProcessor:
     def __init__(self):
-        self.processed_transactions: Dict[str, Dict[str, Decimal]] = {}
+        self.processed_transactions: Dict[str, Dict[str, List[Dict]]] = {}
         self.bad_transactions: List[Dict] = []
 
     def generate_chart_of_accounts(self):
@@ -17,37 +23,152 @@ class TransactionProcessor:
         chart = []
         for account, cards in self.processed_transactions.items():
             account_info = f"Account: {account}\n"
-            for card, balance in cards.items():
+            for card, transactions in cards.items():
+                balance = sum(t['amount'] for t in transactions)
                 account_info += f"  Card: {card}, Balance: ${balance:.2f}\n"
             chart.append(account_info)
         return "\n".join(chart)
+
+    def get_account_transactions(self, account: str, card: str):
+        """Get all transactions for a specific account and card."""
+        if account not in self.processed_transactions or card not in self.processed_transactions[account]:
+            return []
+        return self.processed_transactions[account][card]
+
+    def export_transactions_txt(self, account: str, card: str) -> str:
+        """Export transactions for a specific account and card as a text string."""
+        transactions = self.get_account_transactions(account, card)
+        output = f"Transactions for Account: {account}, Card: {card}\n\n"
+        for t in transactions:
+            output += f"Amount: ${t['amount']:.2f}, Type: {t['type']}, Description: {t['description']}\n"
+        return output
+
+    def export_transactions_pdf(self, account: str, card: str) -> str:
+        """Export transactions for a specific account and card as a PDF."""
+        transactions = self.get_account_transactions(account, card)
+        buffer = io.BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=letter)
+        elements = []
+
+        data = [["Amount", "Type", "Description"]]
+        for t in transactions:
+            data.append([f"${t['amount']:.2f}", t['type'], t['description']])
+
+        table = Table(data)
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 14),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 1), (-1, -1), 12),
+            ('TOPPADDING', (0, 1), (-1, -1), 6),
+            ('BOTTOMPADDING', (0, 1), (-1, -1), 6),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black)
+        ]))
+
+        elements.append(table)
+        doc.build(elements)
+
+        pdf = buffer.getvalue()
+        buffer.close()
+        return base64.b64encode(pdf).decode('utf-8')
+
+    def export_person_transactions(self, person: str) -> str:
+        """Export all transactions for a specific person, including all their cards."""
+        buffer = io.BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=letter, topMargin=50, bottomMargin=50, leftMargin=50, rightMargin=50)
+        elements = []
+        styles = getSampleStyleSheet()
+        
+        # Add a title
+        elements.append(Paragraph(f"Transaction Report for {person}", styles['Title']))
+        elements.append(Spacer(1, 20))
+        
+        if person not in self.processed_transactions:
+            elements.append(Paragraph("No transactions found.", styles['Normal']))
+        else:
+            for card, transactions in self.processed_transactions[person].items():
+                elements.append(Paragraph(f"Card: {card}", styles['Heading2']))
+                elements.append(Spacer(1, 10))
+                
+                data = [["Amount", "Type", "Description"]]
+                for t in transactions:
+                    data.append([f"${t['amount']:.2f}", t['type'], t['description']])
+                
+                # Calculate column widths
+                col_widths = [doc.width/4, doc.width/4, doc.width/2]
+                
+                table = Table(data, colWidths=col_widths)
+                table.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+                    ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTSIZE', (0, 0), (-1, 0), 12),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                    ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                    ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+                    ('ALIGN', (0, 1), (-1, -1), 'LEFT'),
+                    ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+                    ('FONTSIZE', (0, 1), (-1, -1), 10),
+                    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                    ('BOX', (0, 0), (-1, -1), 2, colors.black),
+                ]))
+                elements.append(table)
+                elements.append(Spacer(1, 20))
+
+            # Add a summary
+            total_balance = sum(sum(t['amount'] for t in transactions) for transactions in self.processed_transactions[person].values())
+            elements.append(Paragraph(f"Total Balance: ${total_balance:.2f}", styles['Heading2']))
+
+        # Add page numbers
+        def add_page_number(canvas, doc):
+            page_num = canvas.getPageNumber()
+            text = f"Page {page_num}"
+            canvas.drawRightString(doc.pagesize[0] - 50, 30, text)
+
+        doc.build(elements, onFirstPage=add_page_number, onLaterPages=add_page_number)
+        pdf = buffer.getvalue()
+        buffer.close()
+        return base64.b64encode(pdf).decode('utf-8')
 
     def get_accounts_for_collections(self):
         """Identify accounts that need to go to collections."""
         collections = []
         for account, cards in self.processed_transactions.items():
-            for card, balance in cards.items():
+            for card, transactions in cards.items():
+                balance = sum(t['amount'] for t in transactions)
                 if balance < 0:
                     collections.append(f"Account: {account}, Card: {card}, Balance: ${balance:.2f}")
         return collections
 
-    def generate_balance_chart(self):
-        """Generate a bar chart of account balances."""
-        accounts = []
-        balances = []
-        colors = []
+    def generate_balance_chart(self, top_n: int = 20):
+        """Generate a bar chart of account balances for the top N accounts."""
+        account_balances = []
         for account, cards in self.processed_transactions.items():
-            for card, balance in cards.items():
-                accounts.append(f"{account} ({card})")
-                balances.append(float(balance))
-                colors.append('red' if balance < 0 else 'green')
+            total_balance = sum(sum(t['amount'] for t in transactions) for transactions in cards.values())
+            account_balances.append((account, total_balance))
+        
+        # Sort by absolute balance and get top N
+        top_accounts = sorted(account_balances, key=lambda x: abs(x[1]), reverse=True)[:top_n]
+        
+        accounts = [f"{account} (Total)" for account, _ in top_accounts]
+        balances = [float(balance) for _, balance in top_accounts]
+        colors = ['red' if balance < 0 else 'green' for balance in balances]
         
         return go.Figure(data=[go.Bar(
             x=accounts,
             y=balances,
             marker_color=colors
         )], layout=go.Layout(
-            title="Account Balances",
+            title=f"Top {top_n} Account Balances",
             xaxis_title="Accounts",
             yaxis_title="Balance ($)"
         ))
@@ -72,20 +193,18 @@ class TransactionProcessor:
                 self.processed_transactions[account_name] = {}
             
             if card_number not in self.processed_transactions[account_name]:
-                self.processed_transactions[account_name][card_number] = Decimal('0')
+                self.processed_transactions[account_name][card_number] = []
             
-            if transaction_type == 'Credit':
-                self.processed_transactions[account_name][card_number] += amount
-            elif transaction_type == 'Debit':
-                self.processed_transactions[account_name][card_number] -= amount
-            elif transaction_type == 'Transfer':
-                target_card = str(row['Target Card Number'])
-                if target_card not in self.processed_transactions[account_name]:
-                    self.processed_transactions[account_name][target_card] = Decimal('0')
-                self.processed_transactions[account_name][card_number] -= amount
-                self.processed_transactions[account_name][target_card] += amount
-            else:
-                return False, f"Invalid transaction type: {transaction_type}"
+            transaction = {
+                'amount': amount,
+                'type': transaction_type,
+                'description': row['Description']
+            }
+            
+            if transaction_type == 'Transfer':
+                transaction['target_card'] = str(row['Target Card Number'])
+            
+            self.processed_transactions[account_name][card_number].append(transaction)
             
             return True, ""
         except KeyError as e:
@@ -157,87 +276,121 @@ def parse_csv(contents: str, filename: str) -> Tuple[pd.DataFrame, List[str]]:
         return pd.DataFrame(), [f"There was an error processing this file: {str(e)}"]
 
 # Initialize the Dash app and TransactionProcessor
-app = dash.Dash(__name__)
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 processor = TransactionProcessor()
 
 # Define the layout
-app.layout = html.Div([
-    html.H1("Transaction Processor"),
-    
-    # File Upload component
-    dcc.Upload(
-        id='upload-data',
-        children=html.Div([
-            'Drag and Drop or ',
-            html.A('Select Files')
-        ]),
-        style={
-            'width': '100%',
-            'height': '60px',
-            'lineHeight': '60px',
-            'borderWidth': '1px',
-            'borderStyle': 'dashed',
-            'borderRadius': '5px',
-            'textAlign': 'center',
-            'margin': '10px'
-        },
-        multiple=False
-    ),
-    
-    # Reset button
-    html.Button('Reset', id='reset-button', n_clicks=0),
-    
-    # Div to display processing result
-    html.Div(id='output-data-upload'),
-    
-    # Div to display the balance chart
-    dcc.Graph(id='balance-chart')
-])
+app.layout = dbc.Container([
+    html.H1("Transaction Processor", className="my-4 text-center"),
 
-# Combined callback for file upload and reset
+    dbc.Row([
+        dbc.Col([
+            dbc.Card([
+                dbc.CardBody([
+                    html.H5("Upload Transactions", className="card-title"),
+                    dcc.Upload(
+                        id='upload-data',
+                        children=html.Div([
+                            'Drag and Drop or ',
+                            html.A('Select Files')
+                        ]),
+                        style={
+                            'width': '100%',
+                            'height': '60px',
+                            'lineHeight': '60px',
+                            'borderWidth': '1px',
+                            'borderStyle': 'dashed',
+                            'borderRadius': '5px',
+                            'textAlign': 'center',
+                        },
+                        multiple=False
+                    ),
+                    dbc.Button('Reset', id='reset-button', color="secondary", className="mt-3"),
+                ])
+            ], className="mb-4"),
+
+            dbc.Card([
+                dbc.CardBody([
+                    html.H5("Export Transactions", className="card-title"),
+                    dcc.Dropdown(id='person-dropdown', placeholder="Select a person", className="mb-3"),
+                    dbc.Button('Export All Transactions for Person', id='export-person-pdf-button', color="primary"),
+                ])
+            ]),
+        ], md=4),
+
+        dbc.Col([
+            dbc.Card([
+                dbc.CardBody([
+                    html.H5("Processing Results", className="card-title"),
+                    html.Div(id='output-data-upload'),
+                ])
+            ], className="mb-4"),
+
+            dbc.Card([
+                dbc.CardBody([
+                    html.H5("Account Balance Chart", className="card-title"),
+                    dcc.Graph(id='balance-chart'),
+                ])
+            ]),
+        ], md=8),
+    ]),
+
+    # Download components
+    dcc.Download(id="download-person-pdf"),
+], fluid=True)
+
+# Callback for file upload and reset
 @app.callback(
     [Output('output-data-upload', 'children'),
      Output('balance-chart', 'figure'),
-     Output('upload-data', 'contents')],
+     Output('upload-data', 'contents'),
+     Output('person-dropdown', 'options')],
     [Input('upload-data', 'contents'),
      Input('reset-button', 'n_clicks')],
     [State('upload-data', 'filename'),
      State('upload-data', 'last_modified')]
 )
-def update_output(content, n_clicks, name, date):
+def update_output(content, reset_clicks, name, date):
     ctx = dash.callback_context
     if not ctx.triggered:
-        return dash.no_update, dash.no_update, dash.no_update
-    
+        return dash.no_update, dash.no_update, dash.no_update, dash.no_update
+
     trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
-    
+
     if trigger_id == 'reset-button':
         processor.reset()
-        return html.Div("Data has been reset."), go.Figure(), None
-    
+        return html.Div("Data has been reset."), go.Figure(), None, []
+
     elif trigger_id == 'upload-data' and content is not None:
         df, warnings = parse_csv(content, name)
         if df.empty:
-            return html.Div([html.P(warning) for warning in warnings]), go.Figure(), dash.no_update
-        
+            return html.Div([html.P(warning, className="text-danger") for warning in warnings]), go.Figure(), dash.no_update, []
+
         processor.process_transactions(df)
-        
-        chart_of_accounts = processor.generate_chart_of_accounts()
-        accounts_for_collections = processor.get_accounts_for_collections()
-        
+
+        person_options = [{'label': person, 'value': person} for person in processor.processed_transactions.keys()]
+
         return html.Div([
-            html.H5(f'File "{name}" has been processed.'),
-            html.H6('Warnings:'),
-            html.Ul([html.Li(warning) for warning in warnings]) if warnings else html.P("No warnings."),
-            html.H6('Chart of Accounts:'),
-            html.Pre(chart_of_accounts),
-            html.H6('Accounts for Collections:'),
-            html.Ul([html.Li(account) for account in accounts_for_collections]) if accounts_for_collections else html.P("No accounts for collections."),
-            html.H6('Bad Transactions:'),
-            html.Ul([html.Li(f"Row: {t['row']}, Error: {t['error']}") for t in processor.bad_transactions]) if processor.bad_transactions else html.P("No bad transactions.")
-        ]), processor.generate_balance_chart(), dash.no_update
-    
-    return dash.no_update, dash.no_update, dash.no_update
+            html.H6(f'File "{name}" has been processed.', className="text-success"),
+            html.H6('Warnings:', className="mt-3"),
+            html.Ul([html.Li(warning, className="text-warning") for warning in warnings]) if warnings else html.P("No warnings.", className="text-muted"),
+            html.H6('Bad Transactions:', className="mt-3"),
+            html.Ul([html.Li(f"Row: {t['row']}, Error: {t['error']}", className="text-danger") for t in processor.bad_transactions[:100]]) if processor.bad_transactions else html.P("No bad transactions.", className="text-muted")
+        ]), processor.generate_balance_chart(), dash.no_update, person_options
+
+    return dash.no_update, dash.no_update, dash.no_update, dash.no_update
+
+# Callback for exporting all transactions for a person as PDF
+@app.callback(
+    Output("download-person-pdf", "data"),
+    [Input("export-person-pdf-button", "n_clicks")],
+    [State('person-dropdown', 'value')]
+)
+def export_person_pdf(n_clicks, person):
+    if n_clicks is None or not person:
+        return dash.no_update
+    content = processor.export_person_transactions(person)
+    return dcc.send_bytes(base64.b64decode(content), filename=f"{person}_all_transactions.pdf")
 
 if __name__ == '__main__':
     app.run_server(debug=True)
