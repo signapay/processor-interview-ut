@@ -3,80 +3,117 @@ from dash import html, dcc, Input, Output, State
 import base64
 import io
 import pandas as pd
+import plotly.graph_objs as go
 from decimal import Decimal, InvalidOperation
 from typing import Dict, List, Tuple
 
-# Initialize the Dash app
-app = dash.Dash(__name__)
+class TransactionProcessor:
+    def __init__(self):
+        self.processed_transactions: Dict[str, Dict[str, Decimal]] = {}
+        self.bad_transactions: List[Dict] = []
 
-# Global variable to store processed transactions
-processed_transactions: Dict[str, Dict[str, Decimal]] = {}
-bad_transactions: List[Dict] = []
+    def generate_chart_of_accounts(self):
+        """Generate a formatted chart of accounts."""
+        chart = []
+        for account, cards in self.processed_transactions.items():
+            account_info = f"Account: {account}\n"
+            for card, balance in cards.items():
+                account_info += f"  Card: {card}, Balance: ${balance:.2f}\n"
+            chart.append(account_info)
+        return "\n".join(chart)
 
-def process_transaction(row: pd.Series) -> Tuple[bool, str]:
-    """
-    Process a single transaction and update the processed_transactions dictionary.
-    
-    Args:
-    row (pd.Series): A row from the transaction DataFrame
-    
-    Returns:
-    Tuple[bool, str]: A tuple containing a boolean indicating success and an error message if applicable
-    """
-    try:
-        account_name = row['Account Name']
-        card_number = str(row['Card Number'])
-        amount = Decimal(str(row['Transaction Amount']))
-        transaction_type = row['Transaction Type']
-        
-        if account_name not in processed_transactions:
-            processed_transactions[account_name] = {}
-        
-        if card_number not in processed_transactions[account_name]:
-            processed_transactions[account_name][card_number] = Decimal('0')
-        
-        if transaction_type == 'Credit':
-            processed_transactions[account_name][card_number] += amount
-        elif transaction_type == 'Debit':
-            processed_transactions[account_name][card_number] -= amount
-        elif transaction_type == 'Transfer':
-            target_card = str(row['Target Card Number'])
-            if target_card not in processed_transactions[account_name]:
-                processed_transactions[account_name][target_card] = Decimal('0')
-            processed_transactions[account_name][card_number] -= amount
-            processed_transactions[account_name][target_card] += amount
-        else:
-            return False, f"Invalid transaction type: {transaction_type}"
-        
-        return True, ""
-    except KeyError as e:
-        return False, f"Missing required field: {str(e)}"
-    except InvalidOperation:
-        return False, f"Invalid amount: {row['Transaction Amount']}"
-    except Exception as e:
-        return False, f"Unexpected error: {str(e)}"
+    def get_accounts_for_collections(self):
+        """Identify accounts that need to go to collections."""
+        collections = []
+        for account, cards in self.processed_transactions.items():
+            for card, balance in cards.items():
+                if balance < 0:
+                    collections.append(f"Account: {account}, Card: {card}, Balance: ${balance:.2f}")
+        return collections
 
-def process_transactions(df: pd.DataFrame) -> Tuple[Dict[str, Dict[str, Decimal]], List[Dict]]:
-    """
-    Process all transactions in the DataFrame.
-    
-    Args:
-    df (pd.DataFrame): The DataFrame containing all transactions
-    
-    Returns:
-    Tuple[Dict[str, Dict[str, Decimal]], List[Dict]]: A tuple containing the processed transactions and bad transactions
-    """
-    global processed_transactions, bad_transactions
-    
-    for _, row in df.iterrows():
-        success, error_message = process_transaction(row)
-        if not success:
-            bad_transactions.append({
-                'row': row.to_dict(),
-                'error': error_message
-            })
-    
-    return processed_transactions, bad_transactions
+    def generate_balance_chart(self):
+        """Generate a bar chart of account balances."""
+        accounts = []
+        balances = []
+        colors = []
+        for account, cards in self.processed_transactions.items():
+            for card, balance in cards.items():
+                accounts.append(f"{account} ({card})")
+                balances.append(float(balance))
+                colors.append('red' if balance < 0 else 'green')
+        
+        return go.Figure(data=[go.Bar(
+            x=accounts,
+            y=balances,
+            marker_color=colors
+        )], layout=go.Layout(
+            title="Account Balances",
+            xaxis_title="Accounts",
+            yaxis_title="Balance ($)"
+        ))
+
+    def process_transaction(self, row: pd.Series) -> Tuple[bool, str]:
+        """
+        Process a single transaction and update the processed_transactions dictionary.
+        
+        Args:
+        row (pd.Series): A row from the transaction DataFrame
+        
+        Returns:
+        Tuple[bool, str]: A tuple containing a boolean indicating success and an error message if applicable
+        """
+        try:
+            account_name = row['Account Name']
+            card_number = str(row['Card Number'])
+            amount = Decimal(str(row['Transaction Amount']))
+            transaction_type = row['Transaction Type']
+            
+            if account_name not in self.processed_transactions:
+                self.processed_transactions[account_name] = {}
+            
+            if card_number not in self.processed_transactions[account_name]:
+                self.processed_transactions[account_name][card_number] = Decimal('0')
+            
+            if transaction_type == 'Credit':
+                self.processed_transactions[account_name][card_number] += amount
+            elif transaction_type == 'Debit':
+                self.processed_transactions[account_name][card_number] -= amount
+            elif transaction_type == 'Transfer':
+                target_card = str(row['Target Card Number'])
+                if target_card not in self.processed_transactions[account_name]:
+                    self.processed_transactions[account_name][target_card] = Decimal('0')
+                self.processed_transactions[account_name][card_number] -= amount
+                self.processed_transactions[account_name][target_card] += amount
+            else:
+                return False, f"Invalid transaction type: {transaction_type}"
+            
+            return True, ""
+        except KeyError as e:
+            return False, f"Missing required field: {str(e)}"
+        except InvalidOperation:
+            return False, f"Invalid amount: {row['Transaction Amount']}"
+        except Exception as e:
+            return False, f"Unexpected error: {str(e)}"
+
+    def process_transactions(self, df: pd.DataFrame):
+        """
+        Process all transactions in the DataFrame.
+        
+        Args:
+        df (pd.DataFrame): The DataFrame containing all transactions
+        """
+        for _, row in df.iterrows():
+            success, error_message = self.process_transaction(row)
+            if not success:
+                self.bad_transactions.append({
+                    'row': row.to_dict(),
+                    'error': error_message
+                })
+
+    def reset(self):
+        """Reset the processor state."""
+        self.processed_transactions.clear()
+        self.bad_transactions.clear()
 
 def parse_csv(contents: str, filename: str) -> Tuple[pd.DataFrame, List[str]]:
     """
@@ -119,6 +156,10 @@ def parse_csv(contents: str, filename: str) -> Tuple[pd.DataFrame, List[str]]:
     except Exception as e:
         return pd.DataFrame(), [f"There was an error processing this file: {str(e)}"]
 
+# Initialize the Dash app and TransactionProcessor
+app = dash.Dash(__name__)
+processor = TransactionProcessor()
+
 # Define the layout
 app.layout = html.Div([
     html.H1("Transaction Processor"),
@@ -148,41 +189,55 @@ app.layout = html.Div([
     
     # Div to display processing result
     html.Div(id='output-data-upload'),
+    
+    # Div to display the balance chart
+    dcc.Graph(id='balance-chart')
 ])
 
-# Callback for file upload
+# Combined callback for file upload and reset
 @app.callback(
-    Output('output-data-upload', 'children'),
-    Input('upload-data', 'contents'),
-    State('upload-data', 'filename'),
-    State('upload-data', 'last_modified')
+    [Output('output-data-upload', 'children'),
+     Output('balance-chart', 'figure'),
+     Output('upload-data', 'contents')],
+    [Input('upload-data', 'contents'),
+     Input('reset-button', 'n_clicks')],
+    [State('upload-data', 'filename'),
+     State('upload-data', 'last_modified')]
 )
-def update_output(content, name, date):
-    if content is not None:
+def update_output(content, n_clicks, name, date):
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        return dash.no_update, dash.no_update, dash.no_update
+    
+    trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    
+    if trigger_id == 'reset-button':
+        processor.reset()
+        return html.Div("Data has been reset."), go.Figure(), None
+    
+    elif trigger_id == 'upload-data' and content is not None:
         df, warnings = parse_csv(content, name)
         if df.empty:
-            return html.Div([html.P(warning) for warning in warnings])
+            return html.Div([html.P(warning) for warning in warnings]), go.Figure(), dash.no_update
         
-        processed_transactions, bad_transactions = process_transactions(df)
+        processor.process_transactions(df)
+        
+        chart_of_accounts = processor.generate_chart_of_accounts()
+        accounts_for_collections = processor.get_accounts_for_collections()
         
         return html.Div([
             html.H5(f'File "{name}" has been processed.'),
             html.H6('Warnings:'),
             html.Ul([html.Li(warning) for warning in warnings]) if warnings else html.P("No warnings."),
             html.H6('Chart of Accounts:'),
-            html.Pre(str(processed_transactions)),
+            html.Pre(chart_of_accounts),
+            html.H6('Accounts for Collections:'),
+            html.Ul([html.Li(account) for account in accounts_for_collections]) if accounts_for_collections else html.P("No accounts for collections."),
             html.H6('Bad Transactions:'),
-            html.Pre(str(bad_transactions))
-        ])
-
-# Callback for reset button
-@app.callback(
-    Output('upload-data', 'contents'),
-    Input('reset-button', 'n_clicks')
-)
-def reset_data(n_clicks):
-    if n_clicks > 0:
-        return None
+            html.Ul([html.Li(f"Row: {t['row']}, Error: {t['error']}") for t in processor.bad_transactions]) if processor.bad_transactions else html.P("No bad transactions.")
+        ]), processor.generate_balance_chart(), dash.no_update
+    
+    return dash.no_update, dash.no_update, dash.no_update
 
 if __name__ == '__main__':
     app.run_server(debug=True)
