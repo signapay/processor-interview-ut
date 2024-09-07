@@ -14,7 +14,17 @@ public class Main
             String filePath = readFile.nextLine();
 
             File file = new File(filePath);
+
+            while(!(file.exists())) // prompt user until a valid file is provided
+            {   
+                System.out.print("File not found, please provide a valid file address:");
+                readFile = new Scanner(System.in);
+                filePath = readFile.nextLine();
+                file = new File(filePath);
+            }
+
             readFile.close();
+
             // creating an arraylist (could have created an array but chose arraylist as it is more understandable by the examiner)
             ArrayList<Transaction> transactions = new ArrayList<>(); 
 
