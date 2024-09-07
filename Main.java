@@ -7,11 +7,20 @@ public class Main
 {
         public static void main( String[] args )
         {  
-            System.out.print("Enter the full path of the file to be processed:");
+            while(true) // program will keep running until user wants to exit
+            {
+            System.out.println();
+            System.out.print("Enter the full path of the file to be processed (enter 'exit' to terminate the program):");
             Scanner readFile = new Scanner(System.in); // get the file path from the user
 
             //String filePath = "/Users/tanaypatel/Desktop/transaction/src/main/java/sgp/transactionprocessor/data.csv";
             String filePath = readFile.nextLine();
+
+            if(filePath.equalsIgnoreCase("exit"))
+            {
+                readFile.close();
+                System.exit(0);
+            }
 
             File file = new File(filePath);
 
@@ -22,8 +31,6 @@ public class Main
                 filePath = readFile.nextLine();
                 file = new File(filePath);
             }
-
-            readFile.close();
 
             // creating an arraylist (could have created an array but chose arraylist as it is more understandable by the examiner)
             ArrayList<Transaction> transactions = new ArrayList<>(); 
@@ -55,8 +62,6 @@ public class Main
                 }
 
             } catch (FileNotFoundException e) {
-                System.out.println("File not found. Program terminated.");
-                System.exit(0);
                 e.printStackTrace();
             }
             catch (NumberFormatException e) {
@@ -222,6 +227,7 @@ public class Main
             {
                 System.out.println("Error occured while writing to the file: " + e.getMessage());
             }
+        }
         }
     }
 
