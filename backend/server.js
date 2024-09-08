@@ -16,7 +16,7 @@ let collections = [];
 const upload = multer({ dest: 'uploads/' });
 
 
-const validateTransaction = (data) => {
+const validateTransaction = (data) => { //validating the transactions whether they are good or bad transaction
     return (
         data.accountName &&
         data.cardNumber &&
@@ -26,7 +26,7 @@ const validateTransaction = (data) => {
 };
 
 
-app.post('/upload', upload.single('file'), (req, res) => {
+app.post('/upload', upload.single('file'), (req, res) => { //api to read the data from the csv file and segregate into array based on condition
     const results = [];
     const filePath = req.file.path;
     fs.createReadStream(filePath)
@@ -69,14 +69,14 @@ app.get('/reports', (req, res) => {
 });
 
 
-app.post('/reset', (req, res) => {
+app.post('/reset', (req, res) => {//api to reset the array's
     transactions = [];
     badTransactions = [];
     collections = [];
     res.status(200).send({ message: 'System reset successfully' });
 });
 
-app.use(express.static(path.join(__dirname, '../frontend/build')));
+app.use(express.static(path.join(__dirname, '../frontend/build'))); // connect to the frontend files in the dist folder of frontend
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));

@@ -12,7 +12,7 @@ function App() {
         setFile(e.target.files[0]);
     };
 
-    const uploadFile = async () => {
+    const uploadFile = async () => { //Method that consists of Axios request to upload the user selected file.
         if (!file) {
             alert('Please select a file to upload.');
             return;
@@ -32,7 +32,7 @@ function App() {
         }
     };
 
-    const getReports = async () => {
+    const getReports = async () => { //Method to get the reports
         try {
             const res = await axios.get('http://localhost:5000/reports');
             setReports(res.data);
@@ -43,7 +43,7 @@ function App() {
         }
     };
 
-    const resetSystem = async () => {
+    const resetSystem = async () => { // Method to reset the system
         try {
             await axios.post('http://localhost:5000/reset');
             alert('System reset successfully, You can upload the new file or View the reports of the same file again');
