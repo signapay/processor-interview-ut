@@ -1,0 +1,25 @@
+.App {
+  padding: 20px;
+}
+
+h1, h2 {
+  font-family: 'Arial', sans-serif;
+  color: #343a40;
+  margin-bottom: 20px;
+}
+
+button {
+  margin-right: 10px;
+}
+
+.table {
+  margin-top: 20px;
+}
+
+.table th, .table td {
+  text-align: center;
+}
+
+input[type="file"] {
+  margin-bottom: 20px;
+}
