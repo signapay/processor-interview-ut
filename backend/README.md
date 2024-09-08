@@ -1,0 +1,2 @@
+- "npm install" - to install all the packages
+- "nodemon server" - to start run the code and on port 5000 the code will be run.
