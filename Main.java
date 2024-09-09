@@ -1,17 +1,28 @@
 package sgp.transactionprocessor;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.io.*;
 
 public class Main 
 {
         public static void main( String[] args )
         {  
-            System.out.print("Enter the full path of the file to be processed:");
+            while(true) // program will keep running until user wants to exit
+            {
+            System.out.println();
+            System.out.print("Enter the full path of the file to be processed (enter 'exit' to terminate the program):");
             Scanner readFile = new Scanner(System.in); // get the file path from the user
 
-            //String filePath = "/Users/tanaypatel/Desktop/transaction/src/main/java/sgp/transactionprocessor/data.csv";
+            //String filePath = "/Users/tanaypatel/Desktop/transaction/src/main/java/sgp/transactionprocessor/test.csv";
             String filePath = readFile.nextLine();
+
+            if(filePath.equalsIgnoreCase("exit"))
+            {
+                readFile.close();
+                System.exit(0);
+            }
 
             File file = new File(filePath);
 
@@ -23,8 +34,6 @@ public class Main
                 file = new File(filePath);
             }
 
-            readFile.close();
-
             // creating an arraylist (could have created an array but chose arraylist as it is more understandable by the examiner)
             ArrayList<Transaction> transactions = new ArrayList<>(); 
 
@@ -34,16 +43,40 @@ public class Main
             long cardNo = 0, trgNo = 0;
             double transAmount = 0.0;
 
+
             String[] values = {""};
 
-            try (Scanner reader = new Scanner(file)) {
+            Pattern pattern = Pattern.compile("[a-zA-Z]"); // using pattern matcher for unparseable transactions
+
+            try(Scanner reader = new Scanner(file))  {
                 while (reader.hasNextLine()) {
+
                     values = reader.nextLine().split(","); // comma seperated transaction in the csv file
 
                     for (int i = 0; i < values.length; i++) {
                         accName = values[0];
-                        cardNo = Long.parseLong(values[1]); // parse from string to number
-                        transAmount = Double.parseDouble(values[2]);
+                        Matcher matcher = pattern.matcher(values[1]);
+
+                        if(matcher.find())
+                        {
+                            faultyTransactions.add(new FaultyTrans(values[0], values[1], values[2], values[3], values[4], ""));
+                            break;
+                        }
+
+                        else
+                            cardNo = Long.parseLong(values[1]); // parse from string to number
+
+                        matcher = pattern.matcher(values[2]);
+
+                        if(matcher.find())
+                        {
+                            faultyTransactions.add(new FaultyTrans(values[0], values[1], values[2], values[3], values[4], ""));
+                            break;
+                        }
+
+                        else
+                            transAmount = Double.parseDouble(values[2]);
+
                         transType = values[3];
                         desc = values[4];
                         if(values.length > 5) // only a few will have the 6th column being transfer card no.
@@ -52,22 +85,31 @@ public class Main
 
                     // add the transaction in the transactions arraylist
                     transactions.add(new Transaction(accName, cardNo, transAmount, transType, desc, trgNo));
+
                 }
 
-            } catch (FileNotFoundException e) {
-                System.out.println("File not found. Program terminated.");
-                System.exit(0);
+            } 
+            catch(FileNotFoundException e)
+            {
                 e.printStackTrace();
             }
             catch (NumberFormatException e) {
-                e.printStackTrace();
                 // Any transaction having a typo would be recorded in the faultyTransaction arraylist
-                faultyTransactions.add(new FaultyTrans(values[0], values[1], values[2], values[3], values[4], ""));
             }
+        
+
+        if(transactions.size() == 0) // if input file empty
+        {
+            System.out.println("No transactions to process.");
+        }
+
+        else 
+        {
 
             Collections.sort(transactions, new NameComparator()); // sort the transactions by AccountName
 
             // Process Transactions:
+
 
             boolean flag = true;
 
@@ -216,12 +258,16 @@ public class Main
                 }
     
                 bufferedWriter.close();
+                j = 0;
+                flag = true;
             } 
 
             catch (IOException e) 
             {
                 System.out.println("Error occured while writing to the file: " + e.getMessage());
             }
+        }
+        }
         }
     }
 
