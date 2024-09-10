@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Transaction Processor</title>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <a href="/" class="navbar-brand">SignaPay (Transaction Processor)</a>
+        </div>
+        <div class="navbar-links">
+            <a href="/">Home</a>
+        </div>
+    </nav>
+
+    <div class="main-container">
+
+        <!-- File upload form section -->
+        <div class="upload-section">
+            <h1>Upload Transaction File</h1>
+
+
+            <div class="upload-container">
+                <!-- Form to handle file upload and buttons -->
+                <form action="/" method="POST" enctype="multipart/form-data" style="display: flex; align-items: center; gap: 15px;">
+                    <!-- Custom file input and display -->
+                    <label for="file" class="custom-file-upload button-style">Choose file to upload</label>
+                    <input type="file" name="file" id="file" onchange="displayFileName()"> <!-- Add onchange event -->
+
+                    <!-- File name display section -->
+                    <div id="file-name" style="font-size: 0.9em; color: #333; margin-top: 5px;">No file chosen</div>
+
+                    <!-- Upload button -->
+                    <button type="submit" style="margin-left: 10px;" class="button-style">Upload</button>
+                </form>
+
+                <!-- Clear All Files button -->
+                <form action="{{ url_for('clear_files') }}" method="POST" onsubmit="refreshPage(event)" style="margin-left: 10px;">
+                    <button type="submit" class="button-style">Reset System</button>
+                </form>
+            </div>
+
+            <!-- Display messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <!-- File card section -->
+        <!-- File card section -->
+        {% if files_uploaded %}
+            <div class="file-card-section">
+                <h2>Uploaded File Details</h2>
+                <div class="file-cards-container"> <!-- Container to hold the cards in a row -->
+                    {% for file in files_uploaded %}
+                    <div class="file-card">
+                        <div class="file-details">
+                            <span class="file-icon">&#128196;</span> <!-- File Icon -->
+                            <p class="file-name">{{ file }}</p> <!-- Show the file name -->
+                        </div>
+                        <div class="file-options">
+                            <a href="{{ url_for('report_accounts', filename=file) }}" class="button-style">View Accounts</a>
+                            <a href="{{ url_for('report_bad_transactions', filename=file) }}" class="button-style">View Bad Transactions</a>
+                            <a href="{{ url_for('report_collections', filename=file) }}" class="button-style">View Collections</a>
+
+                            <!-- Delete file button -->
+                            <form action="{{ url_for('delete_file', filename=file) }}" method="POST" onsubmit="deleteFile(event)">
+                                <button type="submit" class="button-style">Delete File</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+    </div>
+<script>
+
+    function displayFileName() {
+        var input = document.getElementById('file');  // Get the file input element
+        var fileName = input.files[0] ? input.files[0].name : 'No file chosen';  // Get the file name
+        document.getElementById('file-name').textContent = fileName;  // Display the file name
+    }
+
+    function refreshPage(event) {
+
+        event.preventDefault();
+
+        fetch(event.target.action, {
+            method: 'POST'
+        }).then(response => {
+            if (response.ok) {
+                window.location.reload(); // Refresh the page if the request is successful
+            }
+        }).catch(error => {
+            console.error('Error:', error); // Log any error to the console
+        });
+    }
+
+    function deleteFile(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        // Submit the form using AJAX
+        fetch(event.target.action, {
+            method: 'POST'
+        }).then(response => {
+            if (response.ok) {
+                window.location.reload(); // Refresh the page if the request is successful
+            }
+        }).catch(error => {
+            console.error('Error:', error); // Log any error to the console
+        });
+    }
+
+</script>
+
+</body>
+</html>

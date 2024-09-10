@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>{% block title %}Transaction Processor{% endblock %}</title>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <a href="/" class="navbar-brand">SignaPay (Transaction Processor)</a>
+        </div>
+        <div class="navbar-links">
+            <a href="/">Home</a>
+            <a href="/accounts">View Accounts</a>
+            <a href="/collections">View Collections</a>
+            <a href="/bad-transactions">View Bad Transactions</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>Transaction Processor</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('upload_file') }}">Upload File</a></li>
+                    <li><a href="{{ url_for('report_accounts') }}">Accounts</a></li>
+                    <li><a href="{{ url_for('report_collections') }}">Collections</a></li>
+                    <li><a href="{{ url_for('report_bad_transactions') }}">Bad Transactions</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            {% block content %}
+
+            {% endblock %}
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Transaction Processor</p>
+        </footer>
+    </div>
+</body>
+</html>

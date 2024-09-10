@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Chart of Accounts</title>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <a href="/" class="navbar-brand">SignaPay (Transaction Processor)</a>
+        </div>
+        <div class="navbar-links">
+            <a href="/">Home</a>
+            <a href="/accounts/{{ filename }}">View Accounts</a>
+            <a href="/collections/{{ filename }}">View Collections</a>
+            <a href="/bad-transactions/{{ filename }}">View Bad Transactions</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Chart of Accounts for {{ filename }}</h1>
+
+        <!-- Dropdown to select number of records per page -->
+        <form id="recordsPerPageForm" method="GET" action="{{ url_for('report_accounts', filename=filename) }}">
+            <label for="records_per_page">Records per page:</label>
+            <select name="records_per_page" id="records_per_page" onchange="this.form.submit()">
+                <option value="5" {% if per_page == 5 %}selected{% endif %}>5</option>
+                <option value="10" {% if per_page == 10 %}selected{% endif %}>10</option>
+                <option value="20" {% if per_page == 20 %}selected{% endif %}>20</option>
+                <option value="50" {% if per_page == 50 %}selected{% endif %}>50</option>
+                <option value="100" {% if per_page == 100 %}selected{% endif %}>100</option>
+            </select>
+
+            <!-- Hidden input to preserve the current page while changing records per page -->
+            <input type="hidden" name="page" value="{{ page }}">
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Account Name</th>
+                    <th>Card Number</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for account in accounts %}
+                <tr>
+                    <td>{{ account.account }}</td>
+                    <td>
+                        <span class="card-number hidden" onclick="toggleCardNumber(this)" data-full-card="{{ account.card }}">
+                            **** **** **** {{ account.card[-4:] }}
+                        </span>
+                    </td>
+                    <td>{{ account.amount }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            {% if page > 1 %}
+                <a href="{{ url_for('report_accounts', filename=filename, page=page-1, records_per_page=per_page) }}">&#60;</a>  <!-- Backward Button -->
+            {% endif %}
+
+            <span>Page {{ page }} of {{ total_pages }}</span>
+
+            {% if page < total_pages %}
+                <a href="{{ url_for('report_accounts', filename=filename, page=page+1, records_per_page=per_page) }}">&#62;</a>  <!-- Forward Button -->
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function toggleCardNumber(element) {
+            const fullCardNumber = element.getAttribute('data-full-card');
+            const lastFourDigits = fullCardNumber.slice(-4);
+
+            if (element.classList.contains('hidden')) {
+                element.textContent = fullCardNumber;
+                element.classList.remove('hidden');
+            } else {
+                element.textContent = '**** **** ' + lastFourDigits;
+                element.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

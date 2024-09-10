@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Collections</title>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <a href="/" class="navbar-brand">SignaPay (Transaction Processor)</a>
+        </div>
+        <div class="navbar-links">
+            <a href="/">Home</a>
+            <a href="/accounts">View Accounts</a>
+            <a href="/collections">View Collections</a>
+            <a href="/bad-transactions">View Bad Transactions</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Collections</h1>
+
+        <label for="perPage">Records per page:</label>
+        <select id="perPage" onchange="updatePerPage()">
+            <option value="5" {% if per_page == 5 %} selected {% endif %}>5</option>
+            <option value="10" {% if per_page == 10 %} selected {% endif %}>10</option>
+            <option value="20" {% if per_page == 20 %} selected {% endif %}>20</option>
+            <option value="50" {% if per_page == 50 %} selected {% endif %}>50</option>
+            <option value="100" {% if per_page == 100 %} selected {% endif %}>100</option>
+        </select>
+        {% if collections %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Account Name</th>
+                    <th>Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for collection in collections %}
+                <tr>
+                    <td>{{ collection['account'] }}</td>
+                    <td>{{ collection['balance'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No collections found.</p>
+        {% endif %}
+    </div>
+
+    <script>
+        function toggleCardNumber(element) {
+            const fullCardNumber = element.getAttribute('data-full-card');
+            const lastFourDigits = fullCardNumber.slice(-4);
+
+            if (element.classList.contains('hidden')) {
+                element.textContent = fullCardNumber;
+                element.classList.remove('hidden');
+            } else {
+                element.textContent = '**** **** **** ' + lastFourDigits;
+                element.classList.add('hidden');
+            }
+        }
+
+        // Function to update the number of records per page
+        function updatePerPage() {
+            const perPage = document.getElementById('perPage').value;
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('per_page', perPage);  // Set the new per_page value
+            urlParams.set('page', 1);  // Reset to page 1 when changing per_page
+            window.location.search = urlParams.toString();
+        }
+    </script>
+</body>
+</html>

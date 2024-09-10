@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Bad Transactions</title>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <a href="/" class="navbar-brand">SignaPay (Transaction Processor)</a>
+        </div>
+        <div class="navbar-links">
+            <a href="/">Home</a>
+            <a href="/accounts">View Accounts</a>
+            <a href="/collections">View Collections</a>
+            <a href="/bad-transactions">View Bad Transactions</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Bad Transactions</h1>
+
+        {% if bad_transactions %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Account Name</th>
+                    <th>Card Number</th>
+                    <th>Transaction Amount</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in bad_transactions %}
+                <tr>
+                    <td>{{ transaction['Account Name'] }}</td>
+                    <td>{{ transaction['Card Number'] }}</td>
+                    <td>{{ transaction['Transaction Amount'] }}</td>
+                    <td>{{ transaction['Description'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No bad transactions found.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
