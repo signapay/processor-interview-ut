@@ -81,3 +81,22 @@ You should fork this repo to your own account and then submit a PR when you are 
 - We do NOT expect you to be a designer, we do expect you to consider your user and make the experience intuitive and easy to use
 
 As we said above, if you have any questions, please reach out.
+
+## Submission
+
+First, create .env file by copying .env.example
+
+```bash
+cd backend
+cp .env.example .env
+```
+
+Then edit .env file to set API_KEY. Finally, update API_KEY in docker-compose.yml so that it matches the API_KEY in .env file.
+
+To run the project, you can use the following command:
+
+```bash
+docker-compose up --build
+```
+
+To access the UI, open your browser and navigate to http://localhost:3000

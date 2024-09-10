@@ -1,0 +1,23 @@
+version: 1
+disable_existing_loggers: False
+formatters:
+  default:
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+handlers:
+  file:
+    class: logging.handlers.RotatingFileHandler
+    level: INFO
+    formatter: default
+    filename: uvicorn.log
+    maxBytes: 10485760 # 10MB
+    backupCount: 3
+root:
+  level: INFO
+  handlers: [file]
+loggers:
+  uvicorn:
+    level: INFO
+  uvicorn.error:
+    level: INFO
+  uvicorn.access:
+    level: INFO

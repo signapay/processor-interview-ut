@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    environment:
+      - API_KEY=1234567890
+      - BACKEND_URL=http://backend:8000
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    networks:
+      - app-network
+    env_file:
+      - backend/.env
+    ports:
+      - "8000:8000"
+
+networks:
+  app-network:
