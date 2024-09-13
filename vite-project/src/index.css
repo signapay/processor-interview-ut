@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .form--input {
+        @apply border-2 border-gray-300 rounded-md p-2 my-2;
+    }
+}
+
+@layer utilities{
+    .bg-background{
+        background-color: #6482AD;
+    }
+
+    .bg-button{
+        background-color: #F5EDED;
+    }
+}
