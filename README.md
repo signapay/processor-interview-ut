@@ -1,5 +1,7 @@
 # Transaction Processor
-
+1. Git Clone to your local directory
+2. Run: pip install requirements.txt
+3. Use "streamlit run app.py" to start running on local host
 ## Context
 
 Thank you for taking a the time to complete our interview code project. We realize that there are many ways to conduct the "technical part" of the interview process from L33T code tests to whiteboards, and each has its own respective pros / cons. We intentionally chose the take-home project approach because we believe it gives you the best chance to demonstrate your skills and knowledge in a "normal environment" - i.e. your computer, keyboard, and IDE.
