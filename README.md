@@ -1,6 +1,6 @@
 # Transaction Processor
 1. Git Clone to your local directory
-2. Run: pip install requirements.txt
+2. Run: "pip install -r requirements.txt" (Preferably in a venv)
 3. Use "streamlit run app.py" to start running on local host
 ## Context
 
