@@ -1,0 +1,39 @@
+.header {
+    width: 100%;
+    background-color: white;
+    padding: 25px 1px;
+    /*box-shadow: 0 4px 2px -2px gray;*/
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.header-container {
+    width: 95%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+.logo {
+    height: 25px;
+}
+
+.tabs {
+    display: flex;
+    gap: 60px;
+}
+
+.tabs span {
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    color: black;
+}
+
+.tabs span:hover {
+    color: #1ab9ffc2;
+}

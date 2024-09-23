@@ -1,0 +1,162 @@
+
+.App {
+  text-align: center;
+  padding-top: 120px;
+  padding-bottom: 100px;
+}
+
+.content-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100vh;
+
+  padding-left: 5%;
+  padding-right: 5%;
+  background-color: #0e4c90;
+}
+h1{
+  color: white;
+  font-size: 50px;
+
+}
+.left-content {
+  flex: 1;
+  max-width: 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.right-content {
+  flex: 1;
+  background-image: url('https://signapay.com/wp-content/uploads/2024/01/mobilll.png');
+  background-size: contain;
+  background-position: center right;
+  background-repeat: no-repeat;
+  height: 80%;
+
+}
+
+
+.left-content h1 {
+  font-size: 75px;
+  padding: 10px;
+  margin-bottom: 20px;
+  margin-left: 20px;
+  color: white;
+  font-weight: bold;
+}
+
+.left-content button {
+  margin-top: 10px;
+  padding: 20px;
+
+
+
+
+}
+
+
+.tabs {
+  margin-top: 20px;
+}
+
+.tabs button {
+  padding: 10px 20px;
+  margin: 5px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.tabs button:hover {
+  background-color: #45a049;
+}
+
+.content {
+  margin-top: 20px;
+}
+
+
+table {
+  /*width: 100%;*/
+  border-collapse: collapse;
+  margin: 20px 10px;
+
+}
+
+table, th, td {
+  border: 1px solid #ddd;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+}
+
+th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+h3 {
+  margin-top: 20px;
+}
+
+p {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+body, html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  position: fixed;
+  right: 0;
+  width: 50%;
+  height: 100%;
+  background-image: url('https://signapay.com/wp-content/uploads/2024/01/mobilll.png');  /* Path to your background image */
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.2;
+  z-index: 0;
+}
+
+.App {
+  position: relative;
+  padding-top: 80px;
+  padding-bottom: 100px;
+  min-height: 100vh;
+  z-index: 1;
+}
+
+.file-upload {
+  position: relative;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.file-upload-content {
+  position: relative;
+  z-index: 1;
+  text-align: left;
+}
+
+.content {
+  margin-top: 20px;
+}
