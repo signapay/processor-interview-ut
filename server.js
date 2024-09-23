@@ -23,16 +23,22 @@ app.post('/upload', upload.single('file'), (req, res) => {
       const sheet = workbook.Sheets[sheetName];
   
       // Convert the sheet data to JSON, ensuring the column headers match the keys in the transactions
-      const jsonData = xlsx.utils.sheet_to_json(sheet, {
+      const newTransactions  = xlsx.utils.sheet_to_json(sheet, {
         header: ['Account Name', 'Card Number', 'Transaction Amount', 'Transaction Type', 'Description', 'Target Card Number'],
         defval: null // Set default value to null if any field is missing
       });
   
       // Cache the uploaded transaction data with the correct keys
-      cache.set('transactions', jsonData);
+      let existingTransactions = cache.get('transactions') || [];
+
+    // Append new transactions to existing ones
+    const updatedTransactions = [...existingTransactions, ...newTransactions];
+
+    // Cache the updated transactions
+    cache.set('transactions', updatedTransactions);
   
       // Return success response with the uploaded data
-      res.status(200).json({ message: "File successfully uploaded and cached", data: jsonData });
+      res.status(200).json({ message: "File successfully uploaded and cached", data: updatedTransactions });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Failed to process the uploaded file' });
@@ -86,11 +92,17 @@ app.get('/data', (req, res) => {
     }
 
     // Check for accounts that need to go to collections (negative balance)
-    if (accounts[accountName][cardNumber] < 0) {
-      collections.push({ accountName, cardNumber, balance: accounts[accountName][cardNumber] });
-    }
+    // if (accounts[accountName][cardNumber] < 0) {
+    //   collections.push({ accountName, cardNumber, balance: accounts[accountName][cardNumber] });
+    // }
   });
-
+  for (const accountName in accounts) {
+    for (const cardNumber in accounts[accountName]) {
+      if (accounts[accountName][cardNumber] < 0) {
+        collections.push({ accountName, cardNumber, balance: accounts[accountName][cardNumber] });
+      }
+    }
+  }
   // Prepare report
   const report = {
     chartOfAccounts: accounts,

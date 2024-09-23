@@ -4,6 +4,76 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Transaction Processor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    h1, h2 {
+      color: #333;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .section {
+      margin-bottom: 20px;
+    }
+
+    .collapsible {
+      background-color: #f1f1f1;
+      cursor: pointer;
+      padding: 10px;
+      width: 100%;
+      border: none;
+      text-align: left;
+      outline: none;
+      font-size: 18px;
+    }
+
+    .content {
+      padding: 0 18px;
+      display: none;
+      overflow: hidden;
+      background-color: #fafafa;
+      border-left: 3px solid #4CAF50;
+    }
+
+    .account {
+      padding: 8px;
+      background-color: #e2e2e2;
+      margin: 10px 0;
+    }
+
+    pre {
+      font-family: Consolas, monospace;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .account-details {
+      display: none;
+      padding-left: 20px;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+
+    .dropdown-content p {
+      margin: 5px 0;
+    }
+  </style>
 </head>
 <body>
   <h1>Transaction Processor</h1>
@@ -16,19 +86,32 @@
   </form>
   
   <p id="uploadStatus"></p>
-  
+
   <!-- Get Report Button -->
   <h2>Get Report</h2>
   <button id="getReportButton">Get Report</button>
-  
+
   <!-- Display report -->
-  <div id="reportData"></div>
-  
+  <div class="section">
+    <button class="collapsible" id="chartOfAccountsButton">Chart of Accounts</button>
+    <div class="content" id="chartOfAccounts"></div>
+  </div>
+
+  <div class="section">
+    <button class="collapsible">Collections</button>
+    <div class="content" id="collections"></div>
+  </div>
+
+  <div class="section">
+    <button class="collapsible">Bad Transactions</button>
+    <div class="content" id="badTransactions">No bad transactions.</div>
+  </div>
+
   <!-- Reset Data Button -->
   <h2>Reset Data</h2>
   <button id="resetDataButton">Reset Data</button>
 
-  <!-- JavaScript for API calls -->
+  <!-- JavaScript for API calls and interaction -->
   <script>
     // Handle file upload
     document.getElementById('uploadForm').addEventListener('submit', function(event) {
@@ -51,22 +134,74 @@
       });
     });
 
+    // Clear the "File uploaded successfully!" message when a new file is selected
+    document.getElementById('fileInput').addEventListener('change', function() {
+      document.getElementById('uploadStatus').textContent = '';
+    });
+
     // Fetch report data
     document.getElementById('getReportButton').addEventListener('click', function() {
       fetch('http://localhost:3000/data')
         .then(response => response.json())
         .then(data => {
-          if (data && data.data) {
-            document.getElementById('reportData').innerHTML = JSON.stringify(data.data, null, 2);
-          } else {
-            document.getElementById('reportData').innerHTML = 'No data available';
-          }
+          const chartOfAccounts = formatAccountNames(data.chartOfAccounts);
+          document.getElementById('chartOfAccounts').innerHTML = chartOfAccounts;
+          
+          // Apply collapsible functionality after fetching data
+          applyAccountClickListeners(data.chartOfAccounts);
         })
         .catch(error => {
-          document.getElementById('reportData').innerHTML = 'Error fetching report data';
-          console.error(error);
+          console.error('Error fetching report data:', error);
         });
     });
+
+    // Function to display only account names initially
+    function formatAccountNames(accounts) {
+      let formatted = '';
+      for (const accountName in accounts) {
+        formatted += `
+          <div class="account">
+            <button class="account-name" data-account="${accountName}">${accountName}</button>
+            <div class="account-details" id="details-${accountName}">
+              <!-- Account details will be fetched dynamically when clicked -->
+            </div>
+          </div>
+        `;
+      }
+      return formatted || 'No accounts available';
+    }
+
+    // Fetch and display card details when account name is clicked
+    function applyAccountClickListeners(accounts) {
+      const accountButtons = document.getElementsByClassName('account-name');
+      
+      Array.from(accountButtons).forEach(button => {
+        button.addEventListener('click', function() {
+          const accountName = this.getAttribute('data-account');
+          const detailsDiv = document.getElementById(`details-${accountName}`);
+          
+          // Check if details are already visible
+          if (detailsDiv.style.display === "block") {
+            detailsDiv.style.display = "none"; // Hide the details if already displayed
+            detailsDiv.innerHTML = ''; // Clear the details
+          } else {
+            // Show and populate the card details for this account
+            detailsDiv.innerHTML = getAccountDetailsHtml(accounts[accountName]);
+            detailsDiv.style.display = "block";
+          }
+        });
+      });
+    }
+
+    // Format account details for a given account (cards and balances)
+    function getAccountDetailsHtml(account) {
+      let detailsHtml = '<ul>';
+      for (const cardNumber in account) {
+        detailsHtml += `<li>Card Number: ${cardNumber}, Balance: ${account[cardNumber]}</li>`;
+      }
+      detailsHtml += '</ul>';
+      return detailsHtml;
+    }
 
     // Reset cache data
     document.getElementById('resetDataButton').addEventListener('click', function() {
@@ -76,13 +211,14 @@
         .then(response => response.json())
         .then(data => {
           alert(data.message);
-          document.getElementById('reportData').innerHTML = ''; // Clear report display after reset
+          document.getElementById('chartOfAccounts').innerHTML = '';
         })
         .catch(error => {
           alert('Error resetting data');
           console.error(error);
         });
     });
+
   </script>
 
 </body>
