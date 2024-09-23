@@ -1,15 +1,21 @@
 const express = require('express');
 const multer = require('multer');
 const xlsx = require('xlsx');
+const Decimal = require('decimal.js');
 const cors = require('cors');
 const NodeCache = require('node-cache');
 const cache = new NodeCache();
+const rateLimit = require('express-rate-limit');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100 // Limit each IP to 100 requests per windowMs
+  });
 // Enable CORS for all routes
 app.use(cors());
-
+app.use('/upload', apiLimiter); 
 // Multer configuration
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
