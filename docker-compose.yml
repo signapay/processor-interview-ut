@@ -12,8 +12,8 @@ services:
     depends_on:
       - frontend
 
-  react-frontend:
-    build: ./react-frontend
+  react_frontend:
+    build: ./react_frontend
     ports:
       - "3000:3000"
     stdin_open: true
