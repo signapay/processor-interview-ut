@@ -43,6 +43,15 @@
       font-size: 18px;
     }
 
+    .collapsible:after {
+      content: '\002B'; /* Unicode character for "+" sign */
+      float: right;
+    }
+
+    .collapsible.active:after {
+      content: "\2212"; /* Unicode character for "-" sign */
+    }
+
     .content {
       padding: 0 18px;
       display: none;
@@ -61,17 +70,6 @@
       font-family: Consolas, monospace;
       white-space: pre-wrap;
       word-wrap: break-word;
-    }
-
-    .account-details {
-      display: none;
-      padding-left: 20px;
-      margin-top: 5px;
-      font-size: 14px;
-    }
-
-    .dropdown-content p {
-      margin: 5px 0;
     }
   </style>
 </head>
@@ -93,7 +91,7 @@
 
   <!-- Display report -->
   <div class="section">
-    <button class="collapsible" id="chartOfAccountsButton">Chart of Accounts</button>
+    <button class="collapsible">Chart of Accounts</button>
     <div class="content" id="chartOfAccounts"></div>
   </div>
 
@@ -133,8 +131,6 @@
         console.error(error);
       });
     });
-
-    // Clear the "File uploaded successfully!" message when a new file is selected
     document.getElementById('fileInput').addEventListener('change', function() {
       document.getElementById('uploadStatus').textContent = '';
     });
@@ -144,63 +140,62 @@
       fetch('http://localhost:3000/data')
         .then(response => response.json())
         .then(data => {
-          const chartOfAccounts = formatAccountNames(data.chartOfAccounts);
-          document.getElementById('chartOfAccounts').innerHTML = chartOfAccounts;
+          const chartOfAccounts = formatChartOfAccounts(data.chartOfAccounts);
+          const collections = formatCollections(data.collections);
+          const badTransactions = formatBadTransactions(data.badTransactions);
           
-          // Apply collapsible functionality after fetching data
-          applyAccountClickListeners(data.chartOfAccounts);
+          document.getElementById('chartOfAccounts').innerHTML = chartOfAccounts;
+          document.getElementById('collections').innerHTML = collections;
+          document.getElementById('badTransactions').innerHTML = badTransactions || 'No bad transactions';
         })
         .catch(error => {
           console.error('Error fetching report data:', error);
         });
     });
 
-    // Function to display only account names initially
-    function formatAccountNames(accounts) {
+    // Collapsible sections functionality
+    const collapsibles = document.getElementsByClassName('collapsible');
+    Array.from(collapsibles).forEach((element) => {
+      element.addEventListener('click', function() {
+        this.classList.toggle('active');
+        const content = this.nextElementSibling;
+        if (content.style.display === "block") {
+          content.style.display = "none";
+        } else {
+          content.style.display = "block";
+        }
+      });
+    });
+
+    // Format Chart of Accounts
+    function formatChartOfAccounts(accounts) {
       let formatted = '';
-      for (const accountName in accounts) {
-        formatted += `
-          <div class="account">
-            <button class="account-name" data-account="${accountName}">${accountName}</button>
-            <div class="account-details" id="details-${accountName}">
-              <!-- Account details will be fetched dynamically when clicked -->
-            </div>
-          </div>
-        `;
+      for (const account in accounts) {
+        formatted += `<div class="account"><strong>Account Name: ${account}</strong><br>`;
+        for (const card in accounts[account]) {
+          formatted += `&nbsp;&nbsp;Card Number: ${card}, Balance: ${accounts[account][card]}<br>`;
+        }
+        formatted += `</div>`;
       }
       return formatted || 'No accounts available';
     }
 
-    // Fetch and display card details when account name is clicked
-    function applyAccountClickListeners(accounts) {
-      const accountButtons = document.getElementsByClassName('account-name');
-      
-      Array.from(accountButtons).forEach(button => {
-        button.addEventListener('click', function() {
-          const accountName = this.getAttribute('data-account');
-          const detailsDiv = document.getElementById(`details-${accountName}`);
-          
-          // Check if details are already visible
-          if (detailsDiv.style.display === "block") {
-            detailsDiv.style.display = "none"; // Hide the details if already displayed
-            detailsDiv.innerHTML = ''; // Clear the details
-          } else {
-            // Show and populate the card details for this account
-            detailsDiv.innerHTML = getAccountDetailsHtml(accounts[accountName]);
-            detailsDiv.style.display = "block";
-          }
-        });
+    // Format Collections
+    function formatCollections(collections) {
+      if (collections.length === 0) return 'No accounts in collections.\n';
+      let formatted = '';
+      collections.forEach(entry => {
+        formatted += `<div class="account">Account Name: ${entry.accountName}, Card Number: ${entry.cardNumber}, Balance: ${entry.balance}</div>`;
       });
+      return formatted;
     }
 
-    // Format account details for a given account (cards and balances)
-    function getAccountDetailsHtml(account) {
-      let detailsHtml = '<ul>';
-      for (const cardNumber in account) {
-        detailsHtml += `<li>Card Number: ${cardNumber}, Balance: ${account[cardNumber]}</li>`;
-      }
-      detailsHtml += '</ul>';
-      return detailsHtml;
+    // Format Bad Transactions
+    function formatBadTransactions(badTransactions) {
+      if (badTransactions.length === 0) return 'No bad transactions.\n';
+      return badTransactions.map(txn => 
+        `<div class="account">Account Name: ${txn['Account Name'] || 'N/A'}, Card Number: ${txn['Card Number'] || 'N/A'}, Transaction Type: ${txn['Transaction Type'] || 'N/A'}</div>`
+      ).join('');
     }
 
     // Reset cache data
@@ -212,13 +207,14 @@
         .then(data => {
           alert(data.message);
           document.getElementById('chartOfAccounts').innerHTML = '';
+          document.getElementById('collections').innerHTML = '';
+          document.getElementById('badTransactions').innerHTML = 'No bad transactions.';
         })
         .catch(error => {
           alert('Error resetting data');
           console.error(error);
         });
     });
-
   </script>
 
 </body>
