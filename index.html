@@ -70,6 +70,11 @@
       margin: 10px 0;
     }
 
+    .account-details {
+      display: none;
+      margin-left: 20px;
+    }
+
     pre {
       font-family: Consolas, monospace;
       white-space: pre-wrap;
@@ -95,21 +100,21 @@
 
   <!-- Display report -->
   <div id="reportSections" class="hidden">
-  <div class="section">
-    <button class="collapsible">Chart of Accounts</button>
-    <div class="content" id="chartOfAccounts"></div>
-  </div>
+    <div class="section">
+      <button class="collapsible">Chart of Accounts</button>
+      <div class="content" id="chartOfAccounts"></div>
+    </div>
 
-  <div class="section">
-    <button class="collapsible">Collections</button>
-    <div class="content" id="collections"></div>
-  </div>
+    <div class="section">
+      <button class="collapsible">Collections</button>
+      <div class="content" id="collections"></div>
+    </div>
 
-  <div class="section">
-    <button class="collapsible">Bad Transactions</button>
-    <div class="content" id="badTransactions">No bad transactions.</div>
+    <div class="section">
+      <button class="collapsible">Bad Transactions</button>
+      <div class="content" id="badTransactions"></div>
+    </div>
   </div>
-</div>
 
   <!-- Reset Data Button -->
   <h2>Reset Data</h2>
@@ -147,7 +152,7 @@
       fetch('http://localhost:3000/data')
         .then(response => response.json())
         .then(data => {
-        document.getElementById('reportSections').classList.remove('hidden');
+          document.getElementById('reportSections').classList.remove('hidden');
           const chartOfAccounts = formatChartOfAccounts(data.chartOfAccounts);
           const collections = formatCollections(data.collections);
           const badTransactions = formatBadTransactions(data.badTransactions);
@@ -155,6 +160,9 @@
           document.getElementById('chartOfAccounts').innerHTML = chartOfAccounts;
           document.getElementById('collections').innerHTML = collections;
           document.getElementById('badTransactions').innerHTML = badTransactions || 'No bad transactions';
+
+          // Add click event listeners to the new dropdown buttons
+          addDropdownListeners();
         })
         .catch(error => {
           console.error('Error fetching report data:', error);
@@ -179,11 +187,18 @@
     function formatChartOfAccounts(accounts) {
       let formatted = '';
       for (const account in accounts) {
-        formatted += `<div class="account"><strong>Account Name: ${account}</strong><br>`;
+        formatted += `
+          <div class="account">
+            <button class="account-dropdown">${account}</button>
+            <div class="account-details">
+        `;
         for (const card in accounts[account]) {
           formatted += `&nbsp;&nbsp;Card Number: ${card}, Balance: ${accounts[account][card]}<br>`;
         }
-        formatted += `</div>`;
+        formatted += `
+            </div>
+          </div>
+        `;
       }
       return formatted || 'No accounts available';
     }
@@ -206,6 +221,22 @@
       ).join('');
     }
 
+    // Add click event listeners to dropdown buttons
+    function addDropdownListeners() {
+      const dropdowns = document.getElementsByClassName('account-dropdown');
+      Array.from(dropdowns).forEach((button) => {
+        button.addEventListener('click', function(event) {
+          event.stopPropagation(); // Prevent the click from bubbling up to parent elements
+          const details = this.nextElementSibling;
+          if (details.style.display === "block") {
+            details.style.display = "none";
+          } else {
+            details.style.display = "block";
+          }
+        });
+      });
+    }
+
     // Reset cache data
     document.getElementById('resetDataButton').addEventListener('click', function() {
       fetch('http://localhost:3000/data', {
@@ -216,7 +247,7 @@
           alert(data.message);
           document.getElementById('chartOfAccounts').innerHTML = '';
           document.getElementById('collections').innerHTML = '';
-          document.getElementById('badTransactions').innerHTML = 'No bad transactions.';
+          document.getElementById('badTransactions').innerHTML = '';
           document.getElementById('reportSections').classList.add('hidden');
         })
         .catch(error => {
