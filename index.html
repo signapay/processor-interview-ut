@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Processor</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h2 class="mt-5">Upload Transaction File</h2>
+        <form id="uploadForm" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="file">Select CSV File:</label>
+                <input type="file" class="form-control-file" id="file" name="file" required>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="uploadFile()">Upload and Process</button>
+        </form>
+
+        <h2 class="mt-5">System Operations</h2>
+        <div>
+            <button id="resetButton" class="btn btn-danger" onclick="resetSystem()">Reset System</button>
+        </div>
+
+        <h2 class="mt-5">Reports</h2>
+        <div>
+			<button id="allAccountsButton" class="btn btn-warning" onclick="viewAccounts()">View All Accounts</button>
+            <button id="badTransactionsButton" class="btn btn-warning" onclick="viewBadTransactions()">View Bad Transactions</button>
+            <button id="collectionsButton" class="btn btn-info" onclick="viewCollections()">View Accounts for Collections</button>
+        </div>
+
+        <div id="results" class="mt-3"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const apiUrl = "http://localhost:8080"; // Make sure to change this if your Spring Boot API is running on a different host or port
+
+        // Upload transaction file
+        function uploadFile() {
+            let formData = new FormData();
+            let fileInput = document.getElementById('file');
+            let file = fileInput.files[0];
+            formData.append("file", file);
+
+            $.ajax({
+                url: apiUrl + '/upload',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    alert("File uploaded and processed successfully!");
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert("Error processing file: " + errorThrown);
+                }
+            });
+        }
+
+        // Reset the system
+        function resetSystem() {
+            $.ajax({
+                url: apiUrl + '/reset',
+                type: 'POST',
+                success: function () {
+                    alert("System has been reset!");
+                },
+                error: function () {
+                    alert("Error resetting system.");
+                }
+            });
+        }
+		
+		// View all accounts details
+        function viewAccounts() {
+            $.ajax({
+                url: apiUrl + '/accounts',
+                type: 'GET',
+                success: function (data) {
+                    $("#results").html('<h3>All Accounts</h3><pre>' + JSON.stringify(data, null, 2) + '</pre>');
+                },
+                error: function () {
+                    alert("Error fetching Accounts.");
+                }
+            });
+        }
+
+        // View bad transactions
+        function viewBadTransactions() {
+            $.ajax({
+                url: apiUrl + '/bad-transactions',
+                type: 'GET',
+                success: function (data) {
+                    $("#results").html('<h3>Bad Transactions</h3><pre>' + JSON.stringify(data, null, 2) + '</pre>');
+                },
+                error: function () {
+                    alert("Error fetching bad transactions.");
+                }
+            });
+        }
+
+        // View accounts for collections
+        function viewCollections() {
+            $.ajax({
+                url: apiUrl + '/collections',
+                type: 'GET',
+                success: function (data) {
+                    $("#results").html('<h3>Accounts for Collections</h3><pre>' + JSON.stringify(data, null, 2) + '</pre>');
+                },
+                error: function () {
+                    alert("Error fetching accounts for collections.");
+                }
+            });
+        }
+    </script>
+</body>
+</html>
