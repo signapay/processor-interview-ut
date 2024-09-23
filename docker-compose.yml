@@ -10,7 +10,7 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - frontend
+      - react_frontend
 
   react_frontend:
     build: ./react_frontend
