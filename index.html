@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transaction Processor</title>
+</head>
+<body>
+  <h1>Transaction Processor</h1>
+  
+  <!-- File Upload Form -->
+  <h2>Upload CSV/XLSX File</h2>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" id="fileInput" name="file" accept=".xlsx, .csv" required>
+    <button type="submit">Upload</button>
+  </form>
+  
+  <p id="uploadStatus"></p>
+  
+  <!-- Get Report Button -->
+  <h2>Get Report</h2>
+  <button id="getReportButton">Get Report</button>
+  
+  <!-- Display report -->
+  <div id="reportData"></div>
+  
+  <!-- Reset Data Button -->
+  <h2>Reset Data</h2>
+  <button id="resetDataButton">Reset Data</button>
+
+  <!-- JavaScript for API calls -->
+  <script>
+    // Handle file upload
+    document.getElementById('uploadForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevent the default form submission
+      const fileInput = document.getElementById('fileInput').files[0];
+      const formData = new FormData();
+      formData.append('file', fileInput);
+
+      fetch('http://localhost:3000/upload', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('uploadStatus').textContent = 'File uploaded successfully!';
+      })
+      .catch(error => {
+        document.getElementById('uploadStatus').textContent = 'Error uploading file';
+        console.error(error);
+      });
+    });
+
+    // Fetch report data
+    document.getElementById('getReportButton').addEventListener('click', function() {
+      fetch('http://localhost:3000/data')
+        .then(response => response.json())
+        .then(data => {
+          if (data && data.data) {
+            document.getElementById('reportData').innerHTML = JSON.stringify(data.data, null, 2);
+          } else {
+            document.getElementById('reportData').innerHTML = 'No data available';
+          }
+        })
+        .catch(error => {
+          document.getElementById('reportData').innerHTML = 'Error fetching report data';
+          console.error(error);
+        });
+    });
+
+    // Reset cache data
+    document.getElementById('resetDataButton').addEventListener('click', function() {
+      fetch('http://localhost:3000/data', {
+        method: 'DELETE'
+      })
+        .then(response => response.json())
+        .then(data => {
+          alert(data.message);
+          document.getElementById('reportData').innerHTML = ''; // Clear report display after reset
+        })
+        .catch(error => {
+          alert('Error resetting data');
+          console.error(error);
+        });
+    });
+  </script>
+
+</body>
+</html>
