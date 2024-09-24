@@ -5,7 +5,7 @@ public class Money {
     public int getDollars(){return totalCents / 100;}
     public int getCents(){return totalCents % 100;}
     public int getTotalCents(){return totalCents;}
-    public boolean isNegative(){return evaluateSign(totalCents);}
+    public boolean isNegative(){return !evaluateSign(totalCents);}
 
     // helper methods
     public static boolean evaluateSign(int element){if (element < 0) return false; else return true;}

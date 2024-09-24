@@ -6,8 +6,8 @@ public class Transaction {
     private String accountName;
     public String getAccountName(){return accountName;}
     // card number
-    private int cardNumber;
-    public int getCardNumber(){return cardNumber;}
+    private long cardNumber;
+    public long getCardNumber(){return cardNumber;}
     // transaction amount
     private Money transactionAmount;
     public Money getTransactionAmount(){return transactionAmount;}
@@ -19,15 +19,15 @@ public class Transaction {
     public String getDescription(){return description;}
     // target card
     private boolean hasTargetCard = false;
-    private int targetCardNumber;
-    public int getTargetCardNumber(){return targetCardNumber;}
+    private long targetCardNumber;
+    public long getTargetCardNumber(){return targetCardNumber;}
 
     // constructor ---------------
     // concealed, does nothing
     private Transaction(){ }
 
     // construction factory ----------
-    public static Transaction parseTransaction(String input){
+    public static Transaction make(String input){
         // create transaction
         Transaction transaction = new Transaction();
 
@@ -53,7 +53,7 @@ public class Transaction {
 
         // parse 2: card number --------------------
         try{
-            int cardNumber = Integer.parseInt(arguments[1]); // parse int
+            long cardNumber = Long.parseLong(arguments[1]); // parse int
             if (cardNumber < 1){
                 // NOTE: not sure what min/max length are.
                 // reject illegal number.
@@ -74,10 +74,11 @@ public class Transaction {
             return null;
         }
         // if transaction amount is negative, reject that also
-        if (transaction.transactionAmount.isNegative()){
-            Log.log("Transaction parse failed; transaction amount cannot be negative; transaction: " + input);
-            return null;
-        }
+        // actually permitted, because I don't know the rules of transaction amounts
+//        if (transaction.transactionAmount.isNegative()){
+//            Log.log("Transaction parse failed; transaction amount cannot be negative; transaction: " + input);
+//            return null;
+//        }
 
         // parse 4: transaction type --------------------
         String type = arguments[3].toLowerCase();  // get holotype
@@ -105,7 +106,7 @@ public class Transaction {
 
             // parse number value
             try{
-                int cardNumber = Integer.parseInt(arguments[6]); // parse int
+                long cardNumber = Long.parseLong(arguments[5]); // parse int
                 if (cardNumber < 1){
                     // NOTE: not sure what min/max length are.
                     // reject illegal number.
@@ -115,19 +116,34 @@ public class Transaction {
                 transaction.hasTargetCard = true;   // override flag
             }
             catch (Exception e){
-                Log.log("Transaction parse failed; invalid account number; transaction: " + input);
+                Log.log("Transaction parse failed; invalid target account number; transaction: " + input);
                 return null;
             }
         }
         else{
             //permit extra information
-            if (arguments.length == 6){
+            if (arguments.length == 6 && arguments[5].length() > 0){
                 Log.log("Transaction parse recovered: found card number for non-transfer transaction; transaction: " + input);
             }
         }
 
         // return transaction
         return transaction;
+    }
+
+    public String toCsv() {
+        // add trailing comma if missing
+        if (hasTargetCard) return toString();
+        return toString() + ",";    // comma separation for relevant records
+    }
+
+    @Override
+    public String toString(){
+        String temp = "";
+        if (hasTargetCard) temp = "," + targetCardNumber;
+        return new StringBuilder().append(accountName).append(",").append(cardNumber).append(",").
+        append(transactionAmount).append(",").append(transactionType).append(",").append(description).
+        append(",").append(temp).toString();
     }
 
     //Field	Type	Description
