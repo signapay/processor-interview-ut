@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="alert alert-danger" role="alert">
+    <h4 class="prime-blue">Warning!</h4>
+    <p>Are you sure you want to reset the system? This action will clear all data.</p>
+    <hr>
+    <form action="/reset" method="post">
+        <button type="submit" class="btn btn-prime">Yes, Reset</button>
+        <a href="/" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+{% if success_message %}
+    <div class="alert alert-success mt-4">
+        {{ success_message }}
+    </div>
+{% endif %}
+{% endblock %}
