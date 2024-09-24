@@ -6,6 +6,8 @@ const NodeCache = require('node-cache');
 const cache = new NodeCache();
 const rateLimit = require('express-rate-limit');
 const app = express();
+const path = require('path');
+// const open = require('open'); 
 const PORT = process.env.PORT || 3000;
 
 // Rate limiter configuration to limit each IP to 100 requests per 15 minutes
@@ -13,6 +15,8 @@ const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100 // Limit each IP to 100 requests per windowMs
 });
+
+app.use(express.static('public'));
 
 // Enable CORS for all routes
 app.use(cors());
@@ -23,6 +27,12 @@ app.use('/upload', apiLimiter);
 // Multer configuration to store file in memory
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '', 'index.html'));
+  });
+  
+  
 
 // Upload endpoint (POST)
 app.post('/upload', upload.single('file'), (req, res) => {
@@ -139,5 +149,8 @@ app.delete('/data', (req, res) => {
 
 // Start the server and listen on the specified port
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+    console.log(`Server is running on port ${PORT}`);
+  
+    // Open the index.html file in the default browser
+    // open(`http://localhost:${PORT}`);
+  });
