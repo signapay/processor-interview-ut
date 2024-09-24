@@ -1,0 +1,53 @@
+  <div class="container mt-5">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h1 class="card-title text-center mb-4">Transaction Report</h1>
+
+        <!-- Chart of Accounts -->
+        <h2 class="text-primary">Chart of Accounts</h2>
+        <ul class="list-group mb-4">
+          {% for account, cards in accounts.items() %}
+            <li class="list-group-item">
+              <strong>{{ account }}</strong>
+              <ul class="list-group mt-2">
+                {% for card, balance in cards.items() %}
+                  <li class="list-group-item">Card: {{ card }} - Balance: <span class="text-success">{{ balance }}</span></li>
+                {% endfor %}
+              </ul>
+            </li>
+          {% endfor %}
+        </ul>
+
+        <!-- Collections -->
+        <h2 class="text-warning">Collections (Accounts with Negative Balances)</h2>
+        <ul class="list-group mb-4">
+          {% for item in collections %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                Account: {{ item.account }} - Card: {{ item.card }}
+              </div>
+              <span class="badge bg-danger rounded-pill">Balance: {{ item.balance }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+
+        <!-- Bad Transactions -->
+        <h2 class="text-danger">Bad Transactions</h2>
+        <ul class="list-group mb-4">
+          {% for transaction in bad_transactions %}
+            <li class="list-group-item">
+              <strong>Transaction:</strong> {{ transaction.transaction }} - <strong>Error:</strong> {{ transaction.error }}
+            </li>
+          {% endfor %}
+        </ul>
+
+        <!-- Back Button -->
+        <div class="text-center">
+          <a href="/" class="btn btn-secondary">Go Back</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-4V2aS8Rm4zP8+el6v/aKafwPj5tLT2ceSa2X+GXZs5YoMCf6OQvYw5JZwD49O4b0" crossorigin="anonymous"></script>
