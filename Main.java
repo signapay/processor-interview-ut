@@ -17,6 +17,10 @@ public class Main {
         // test file load
         System.out.println(db.records);
 
+        // load gui
+        GUI gui = new GUI();
+        gui.initialize(db);
+
         // clear files
         db.clearRecords();
 

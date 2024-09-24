@@ -90,4 +90,9 @@ public class Database {
         }
     }
 
+    public boolean hasRecords(){
+        if (records.isEmpty()) return false;
+        return true;
+    }
+
 }
