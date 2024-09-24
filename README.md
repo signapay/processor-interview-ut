@@ -81,3 +81,21 @@ You should fork this repo to your own account and then submit a PR when you are 
 - We do NOT expect you to be a designer, we do expect you to consider your user and make the experience intuitive and easy to use
 
 As we said above, if you have any questions, please reach out.
+
+
+## Running the Project
+
+### Requirements
+
+- Node.js (version 12 or above)
+- npm (Node package manager)
+
+### Install Dependencies:
+- npm install
+- npm install --force
+
+### Run the Application:
+- npm run start  
+
+### Access the Application:
+- http://localhost:3000
