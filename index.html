@@ -125,24 +125,40 @@
 
         #uploadForm {
             display: flex;
-            align-items: center;
+            align-items: stretch;
             margin-bottom: 20px;
         }
+
 
         #fileInput {
             flex-grow: 1;
             padding: 10px;
             border: 1px solid #ccc;
-            border-radius: 4px 0 0 4px;
+            border-right: none;
+            /* border-radius: 0 4px 4px 0; */
+            font-size: 16px;
+            line-height: 1.2;  /* Reduced line height */
+            height: 18px;  /* Set a specific height */
         }
 
         #uploadForm button {
             border-radius: 0 4px 4px 0;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: 1px solid #3498db;
+            background-color: #3498db;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
 
         #uploadStatus {
             margin-top: 10px;
             font-weight: bold;
+        }
+
+        #uploadForm button:hover {
+            background-color: #2980b9;
         }
 
         .success {
