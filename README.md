@@ -54,9 +54,9 @@ A **Django + React** web application that processes transaction files, generates
    The backend will now be accessible at `http://localhost:8000`.
 
 2. **Frontend Setup (React)**:
-    - Navigate to the `frontend` directory:
+    - Navigate to the `react-frontend` directory:
       ```bash
-      cd frontend
+      cd react-frontend
       ```
     - Install the required Node.js packages:
       ```bash
