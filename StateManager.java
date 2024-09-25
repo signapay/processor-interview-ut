@@ -79,21 +79,21 @@ public class StateManager implements ActionListener {
         if(e.getActionCommand().equals("read_file")){
             // read to db
             if(selectedFile.isFile()) {
-                db.readFromFile(selectedFile.toString());
+                if (db.readFromFile(selectedFile.toString())) {
+                    // write data
+                    db.save();
 
-                // update table
-                table.setRecords((ArrayList<Transaction>) db.records.clone());
+                    // update table
+                    resetTableRecord();
 
-                // rerender
-                gui.repaint();
+                    // revoke file opening
+                    setMessage("Read from file '" + selectedFile + "'");
+                    if (openButton != null) openButton.setEnabled(false);
 
-                // revoke file opening
-                setMessage("Read from file '" + selectedFile + "'");
-                if (openButton != null) openButton.setEnabled(false);
-
-                // permit erasure
-                if (db.hasRecords()){
-                    if(clearButton != null) clearButton.setEnabled(true);
+                    // permit erasure
+                    if (db.hasRecords()) {
+                        if (clearButton != null) clearButton.setEnabled(true);
+                    }
                 }
             }
         }
@@ -102,7 +102,9 @@ public class StateManager implements ActionListener {
         if(e.getActionCommand().equals("clear_record")){
             if (db.hasRecords()){
                 db.clearRecords();
+                resetTableRecord();
                 if(clearButton != null) clearButton.setEnabled(false);
+                setMessage("Records cleared.");
             }
         }
     }
@@ -113,9 +115,21 @@ public class StateManager implements ActionListener {
         if (label != null) this.label.setText(message);
     }
 
-    Table table = null;
-    public void registerTable(Table table) {
-        this.table = table;
-        table.setRecords((ArrayList<Transaction>) db.records.clone());
+    TablePanel tablePanel = null;
+    public void registerTablePanel(TablePanel t){
+        this.tablePanel = t;
+        if (tablePanel != null){
+            resetTableRecord();
+        }
+    }
+
+    private void resetTableRecord(){
+        updateTableRecord(db.records);
+    }
+    private void updateTableRecord(ArrayList<Transaction> list){
+        if (tablePanel != null){
+            tablePanel.updateData(list);
+            tablePanel.revalidate();
+        }
     }
 }

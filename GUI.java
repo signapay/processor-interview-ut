@@ -31,15 +31,20 @@ public class GUI {
             top.add(Buttons.generateClearRecordButton(state));
             top.add(Buttons.generateButtonLabel(state));
 
-            // bottom pane
-            JPanel bottom = new JPanel();
-            JTable table = new JTable(new Table(state));
-            table.setFillsViewportHeight(true);
-            bottom.add(new JScrollPane(table));
-            //jframe.add(new JScrollPane(table));
+            // bottom
+            TablePanel table = TablePanel.make(state);
 
-            // add split pane
-            JSplitPane pane = generateSeparator(top, bottom);
+            JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, top, table);
+            pane.setOneTouchExpandable(true);
+
+            // set minimum size
+            Dimension min = new Dimension(100,50);
+            top.setMinimumSize(min);
+            table.setMinimumSize(min);
+
+            // set starting proportions
+            pane.setDividerLocation(200);
+
             jframe.add(pane);
 
             // render jframe

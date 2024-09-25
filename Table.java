@@ -10,12 +10,11 @@ public class Table extends AbstractTableModel {
 
     public void setRecords(ArrayList<Transaction> t){
         records = t;
+        this.fireTableDataChanged();
     }
     String[] names = {"Account Name", "Card Number", "Amount", "Type", "Description", "Target Card"};
 
-    public Table(StateManager state){
-        state.registerTable(this);
-    }
+    public Table(){}
 
     @Override
     public int getRowCount() {

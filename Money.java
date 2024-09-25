@@ -99,6 +99,6 @@ public class Money {
         if (cents >= 0 && cents < 10) centDisplay = "0" + centDisplay; // add leading zero
         //note: can be done more cleanly with print format
 
-        return signPrint + Math.abs(getDollars()) + centDisplay;
+        return signPrint + Math.abs(getDollars()) + "." + centDisplay;
     }
 }

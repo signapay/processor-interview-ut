@@ -34,12 +34,17 @@ public class Database {
         }
     }
 
+    // save file
+    public boolean save(){
+        return writeToFile(new File(persistenceFile));
+    }
+
     // write to file
     public boolean writeToFile(File file){
         // open writing
         try{
             // open file in append mode
-            PrintWriter writer = new PrintWriter(new FileOutputStream(file.toString(), true));
+            PrintWriter writer = new PrintWriter(new FileOutputStream(file.toString(), false));
 
             // log information
             for (Transaction item : records){
