@@ -130,6 +130,7 @@ public class StateManager implements ActionListener {
         if (tablePanel != null){
             tablePanel.updateData(list);
             tablePanel.revalidate();
+            gui.repaint();
         }
     }
 }

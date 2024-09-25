@@ -1,5 +1,4 @@
 import javax.swing.*;
-import javax.swing.table.TableModel;
 import java.util.ArrayList;
 
 public class TablePanel extends JScrollPane {
