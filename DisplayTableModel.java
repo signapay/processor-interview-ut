@@ -2,9 +2,15 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 
-
+/**
+ * Class for custom display model
+ */
 public class DisplayTableModel extends AbstractTableModel {
-    ArrayList<Transaction> records = new ArrayList<>();
+    // record set
+    private ArrayList<Transaction> records = new ArrayList<>();
+
+    // name set
+    private ArrayList<String> titles = new ArrayList<>();
 
     public void setRecords(ArrayList<Transaction> t){
         records = t;

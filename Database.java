@@ -2,12 +2,20 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Record management class
+ */
 public class Database {
-    public static String persistenceFile = ".backup.csv";
+    // internal persistence location
+    public static final String persistenceFile = ".backup.csv";
 
     // internal memory
     public ArrayList<Transaction> records = new ArrayList<>();
 
+    /**
+     * Constructor for database
+     * @param read boolean for reading from persistence file (true for yes)
+     */
     public Database(boolean read){
         if (read){
             // read file if constructor requests
@@ -15,12 +23,17 @@ public class Database {
         }
     }
 
-    // read from file
+    /**
+     * Add records from file
+     * @param file File to read from
+     * @return boolean indicating success
+     */
     public boolean readFromFile(String file){
         // open specified file and read valid transactions to record
         try {
             Scanner scan = new Scanner(new FileInputStream(file));
-            Transaction transaction = null;
+            Transaction transaction;
+            // for each record, attempt to read as transaction
             while (scan.hasNext()){
                 transaction = Transaction.make(scan.nextLine());
                 if (transaction != null){
@@ -34,19 +47,26 @@ public class Database {
         }
     }
 
-    // save file
+    /**
+     * Save records to persistence file
+     * @return boolean indicating success
+     */
     public boolean save(){
         return writeToFile(new File(persistenceFile));
     }
 
-    // write to file
+    /**
+     * Write record state to specified file
+     * @param file File to write to (overwrites)
+     * @return boolean indicating success
+     */
     public boolean writeToFile(File file){
         // open writing
         try{
-            // open file in append mode
+            // open file in overwrite mode
             PrintWriter writer = new PrintWriter(new FileOutputStream(file.toString(), false));
 
-            // log information
+            // record information
             for (Transaction item : records){
                 writer.println(item.toCsv()); // write to file
             }
@@ -62,7 +82,11 @@ public class Database {
         }
     }
 
-    // remove file
+    /**
+     * delete file from filesystem
+     * @param file File to remove
+     * @return boolean indicating success
+     */
     public boolean removeFile(File file){
         // test if file is file
         if (file.isFile()){
@@ -82,7 +106,10 @@ public class Database {
         }
     }
 
-    // clear transactions
+    /**
+     * Clear internal record state. Erases dynamic state and persistent record.
+     * @return boolean indicating success
+     */
     public boolean clearRecords(){
         if (removeFile(new File(persistenceFile))){
             records.clear();
@@ -94,6 +121,10 @@ public class Database {
         }
     }
 
+    /**
+     * Determine if the record state has any records
+     * @return true if records, false if no records
+     */
     public boolean hasRecords(){
         if (records.isEmpty()) return false;
         return true;
