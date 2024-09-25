@@ -1,3 +1,7 @@
+package Datatypes;
+
+import Log.Log;
+
 /**
  * Immutable data object class for money
  */
@@ -45,7 +49,7 @@ public class Money implements Comparable<Money>{
     /**
      * Object factory from string
      * @param input string of monetary amount
-     * @return Money object, or null if failed to convert string
+     * @return Datatypes.Money object, or null if failed to convert string
      */
     public static Money make(String input){
         input = input.strip();  // remove leading and trailing whitespace
@@ -94,7 +98,7 @@ public class Money implements Comparable<Money>{
     /**
      * Object factory from total of cents
      * @param input integer number of total cents
-     * @return new Money object
+     * @return new Datatypes.Money object
      */
     public static Money make(int input){
         Money temp = new Money();
@@ -107,7 +111,7 @@ public class Money implements Comparable<Money>{
     /**
      * Add
      * @param other amount to be added
-     * @return new Money object of sum amount, or this if other is null
+     * @return new Datatypes.Money object of sum amount, or this if other is null
      */
     public Money add(Money other){
         if (other == null) return this;
@@ -117,7 +121,7 @@ public class Money implements Comparable<Money>{
     /**
      * Subtract
      * @param other amount to be subtracted
-     * @return new Money object of difference amount, or this if other is null
+     * @return new Datatypes.Money object of difference amount, or this if other is null
      */
     public Money subtract(Money other){
         if (other == null) return this;
@@ -126,7 +130,7 @@ public class Money implements Comparable<Money>{
 
     /**
      * Compare equality of two money objects.
-     * @param other Money object to be compared
+     * @param other Datatypes.Money object to be compared
      * @return true if equal value, false otherwise or if other is null.
      */
     public boolean equals(Money other){

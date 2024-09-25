@@ -1,5 +1,9 @@
+package Datatypes;
+
+import Log.Log;
+
 /**
- * Transaction data storage object (immutable).
+ * Datatypes.Transaction data storage object (immutable).
  * Fields: accountName, cardNumber, transactionAmount, transactionType, description, targetCardNumber
  */
 public class Transaction {
@@ -70,7 +74,7 @@ public class Transaction {
      * Construction factory for transaction object. Prints to log on fail.
      * @param input comma-separated string of the form "accountName, cardNumber, transactionAmount, transactionType,
      *              transactionDescription, targetCardNumber (optional)"
-     * @return Transaction, or null if invalid
+     * @return Datatypes.Transaction, or null if invalid
      */
     public static Transaction make(String input){
         // if null string, reject
@@ -84,7 +88,7 @@ public class Transaction {
 
         // check parse element number, reject invalid count
         if (arguments.length < 5 || arguments.length > 6){
-            Log.log("Transaction parse failed; expected 5 or 6 arguments, found " + arguments.length + "; transaction: " + input);
+            Log.log("Datatypes.Transaction parse failed; expected 5 or 6 arguments, found " + arguments.length + "; transaction: " + input);
             return null;
         }
 
@@ -95,7 +99,7 @@ public class Transaction {
         // requires a minimum length, alphabet characters and - or , or whitespace only.
         // reject impossible length. defaulted to 1, but can be changed.
         if (arguments[0].length() < 1){
-            Log.log("Transaction parse failed; no account name; transaction: " + input);
+            Log.log("Datatypes.Transaction parse failed; no account name; transaction: " + input);
             return null;
         }
         // clean whitespace to at most one character per word
@@ -107,7 +111,7 @@ public class Transaction {
         result = result.strip(); // remove trailing whitespace
         // if illegal number of elements, reject
         if (result.length() < MIN_NAME){
-            Log.log("Transaction parse failed; no account name; transaction: " + input);
+            Log.log("Datatypes.Transaction parse failed; no account name; transaction: " + input);
             return null;
         }
         for(int i = 0; i < result.length(); i++){
@@ -115,7 +119,7 @@ public class Transaction {
             if (!(Character.isAlphabetic(a) ||
                     Character.isWhitespace(a) ||
                     a == '\'' || a == '-')){
-                Log.log("Transaction parse failed; illegal character in account name; transaction: " + input);
+                Log.log("Datatypes.Transaction parse failed; illegal character in account name; transaction: " + input);
                 return null;
             }
         }
@@ -126,18 +130,18 @@ public class Transaction {
             long cardNumber = Long.parseLong(arguments[1]); // parse int
             // reject negative number.
             if (cardNumber < 1){
-                Log.log("Transaction parse failed; invalid account number (negative number); transaction: " + input);
+                Log.log("Datatypes.Transaction parse failed; invalid account number (negative number); transaction: " + input);
                 return null;
             }
             // reject impossible card number
             if (arguments[1].length() != CARD_LENGTH){
-                Log.log("Transaction parse failed; invalid account number. Expected length " + CARD_LENGTH + "; found length " + arguments[1].length() + "; transaction: " + input);
+                Log.log("Datatypes.Transaction parse failed; invalid account number. Expected length " + CARD_LENGTH + "; found length " + arguments[1].length() + "; transaction: " + input);
                 return null;
             }
             transaction.cardNumber = cardNumber;
         }
         catch (Exception e){
-            Log.log("Transaction parse failed; invalid account number; transaction: " + input);
+            Log.log("Datatypes.Transaction parse failed; invalid account number; transaction: " + input);
             return null;
         }
 
@@ -145,7 +149,7 @@ public class Transaction {
         transaction.transactionAmount = Money.make(arguments[2]);
         // if failed conversion, fail parse
         if (transaction.transactionAmount == null){
-            Log.log("Transaction parse failed; invalid transaction amount; transaction: " + input);
+            Log.log("Datatypes.Transaction parse failed; invalid transaction amount; transaction: " + input);
             return null;
         }
 
@@ -156,7 +160,7 @@ public class Transaction {
         else if (type.equals("debit")){ transaction.transactionType = "Debit";}
         else if (type.equals("transfer")){ transaction.transactionType = "Transfer";}
         else {
-            Log.log("Transaction parse failed; invalid transaction type; transaction: " + input);
+            Log.log("Datatypes.Transaction parse failed; invalid transaction type; transaction: " + input);
             return null;
         }
 
@@ -169,7 +173,7 @@ public class Transaction {
         if (transaction.transactionType.equals("Transfer")){
             // reject invalid length
             if (arguments.length == 5){
-                Log.log("Transaction parse failed; missing target card number; transaction: " + input);
+                Log.log("Datatypes.Transaction parse failed; missing target card number; transaction: " + input);
                 return null;
             }
 
@@ -178,19 +182,19 @@ public class Transaction {
                 long cardNumber = Long.parseLong(arguments[5]); // parse int
                 // reject negative number.
                 if (cardNumber < 1){
-                    Log.log("Transaction parse failed; invalid account number (negative number); transaction: " + input);
+                    Log.log("Datatypes.Transaction parse failed; invalid account number (negative number); transaction: " + input);
                     return null;
                 }
                 // reject impossible card number
                 if (arguments[5].length() != CARD_LENGTH){
-                    Log.log("Transaction parse failed; invalid account number. Expected length " + CARD_LENGTH + "; found length " + arguments[5].length() + "; transaction: " + input);
+                    Log.log("Datatypes.Transaction parse failed; invalid account number. Expected length " + CARD_LENGTH + "; found length " + arguments[5].length() + "; transaction: " + input);
                     return null;
                 }
                 transaction.targetCardNumber = cardNumber;
                 transaction.hasTargetCard = true;   // override flag
             }
             catch (Exception e){
-                Log.log("Transaction parse failed; invalid target account number; transaction: " + input);
+                Log.log("Datatypes.Transaction parse failed; invalid target account number; transaction: " + input);
                 return null;
             }
         }
@@ -198,7 +202,7 @@ public class Transaction {
         else{
             //permit extra information
             if (arguments.length == 6 && arguments[5].length() > 0){
-                Log.log("Transaction parse recovered: found target card number for non-transfer transaction; transaction: " + input);
+                Log.log("Datatypes.Transaction parse recovered: found target card number for non-transfer transaction; transaction: " + input);
             }
         }
 

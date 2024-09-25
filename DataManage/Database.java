@@ -1,3 +1,8 @@
+package DataManage;
+
+import Datatypes.Transaction;
+import Log.Log;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;

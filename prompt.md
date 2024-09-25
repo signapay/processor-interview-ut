@@ -1,4 +1,4 @@
-# Transaction Processor
+# Datatypes.Transaction Processor
 
 ## Context
 
@@ -20,7 +20,7 @@ We will provide your software with a list of transactions. It needs to process t
 
 Beyond these basic requirements, the implementation is up to you.
 
-### Transaction Details
+### Datatypes.Transaction Details
 
 These transactions will contain the following information:
 
@@ -28,8 +28,8 @@ These transactions will contain the following information:
 | ------------------ | ------ | ----------------------------------------------------------------- |
 | Account Name       | Text   | The name of the account                                           |
 | Card Number        | Number | The card number used for the transaction, 1:M with account names  |
-| Transaction Amount | Number | The amount of the transaction, can be positive or negative        |
-| Transaction Type   | Text   | The type of transaction, values can be Credit, Debit, or Transfer |
+| Datatypes.Transaction Amount | Number | The amount of the transaction, can be positive or negative        |
+| Datatypes.Transaction Type   | Text   | The type of transaction, values can be Credit, Debit, or Transfer |
 | Description        | Text   | A brief description of the transaction                            |
 | Target Card Number | Number | only provided if the transaction type is a transfer               |
 

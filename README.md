@@ -1,4 +1,4 @@
-# Transaction Processor
+# Datatypes.Transaction Processor
 
 Interview project for signapay
 
@@ -38,7 +38,7 @@ The software processes transactions provided from a .csv list and reports inform
 - Button for clearing memory
   - also clears the working memory cache in ```.backup.csv```
 - Table for displaying working memory of files
-- Buttons to toggle between table views
+- GUI.Buttons to toggle between table views
 - Button for optional persistence of views to files
 
 ### Table Views
@@ -60,13 +60,13 @@ The software processes transactions provided from a .csv list and reports inform
 
 ## Program Documentation
 
-### Transaction Structure
+### Datatypes.Transaction Structure
 | Field              | Type   | Description                                                       |
 |--------------------|--------|-------------------------------------------------------------------|
 | Account Name       | Text   | The name of the account                                           |
 | Card Number        | Number | The card number used for the transaction, 1:M with account names  |
-| Transaction Amount | Number | The amount of the transaction, can be positive or negative        |
-| Transaction Type   | Text   | The type of transaction, values can be Credit, Debit, or Transfer |
+| Datatypes.Transaction Amount | Number | The amount of the transaction, can be positive or negative        |
+| Datatypes.Transaction Type   | Text   | The type of transaction, values can be Credit, Debit, or Transfer |
 | Description        | Text   | A brief description of the transaction                            |
 | Target Card Number | Number | (optional) only provided if the transaction type is a transfer    |
 

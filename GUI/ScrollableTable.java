@@ -1,3 +1,8 @@
+package GUI;
+
+import DataManage.StateManager;
+import Datatypes.Transaction;
+
 import javax.swing.*;
 import java.util.ArrayList;
 
@@ -19,7 +24,7 @@ public class ScrollableTable extends JScrollPane {
     /**
      * Factory constructor for scrollable table
      * @param state State object to register the object to, or null if no state desired
-     * @return new ScrollableTable object
+     * @return new GUI.ScrollableTable object
      */
     public static ScrollableTable make(StateManager state){
         // construction chain: table model

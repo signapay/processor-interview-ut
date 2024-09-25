@@ -1,3 +1,8 @@
+package DataManage;
+
+import Datatypes.Transaction;
+import GUI.ScrollableTable;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

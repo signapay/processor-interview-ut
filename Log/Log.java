@@ -1,3 +1,5 @@
+package Log;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -9,7 +11,7 @@ public class Log {
     public static Path file = Paths.get(System.getProperty("user.dir"), "log.txt" );
 
     /**
-     * Log message to designated log file using designated logging function
+     * Log.Log message to designated log file using designated logging function
      * @param message text to be logged
      * @return true if succeeded, false if failed
      */
