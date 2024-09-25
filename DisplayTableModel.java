@@ -1,11 +1,9 @@
-import javax.swing.*;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
 import java.util.ArrayList;
 
 
-public class Table extends AbstractTableModel {
+public class DisplayTableModel extends AbstractTableModel {
     ArrayList<Transaction> records = new ArrayList<>();
 
     public void setRecords(ArrayList<Transaction> t){
@@ -14,7 +12,7 @@ public class Table extends AbstractTableModel {
     }
     String[] names = {"Account Name", "Card Number", "Amount", "Type", "Description", "Target Card"};
 
-    public Table(){}
+    public DisplayTableModel(){}
 
     @Override
     public int getRowCount() {

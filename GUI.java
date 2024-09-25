@@ -1,5 +1,4 @@
 import javax.swing.*;
-import javax.swing.plaf.nimbus.State;
 import java.awt.*;
 
 public class GUI {
@@ -32,7 +31,7 @@ public class GUI {
             top.add(Buttons.generateButtonLabel(state));
 
             // bottom
-            TablePanel table = TablePanel.make(state);
+            ScrollableTable table = ScrollableTable.make(state);
 
             JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, top, table);
             pane.setOneTouchExpandable(true);

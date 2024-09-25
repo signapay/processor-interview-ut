@@ -2,11 +2,19 @@ import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 
-// log text to specified file
+/**
+ * Class to log text to a specified file
+ */
 public class LogToFile {
+    // error with file flag, to prevent console spam
     public static boolean errorNotReported = true;
 
-    // log to file
+    /**
+     * Log text to file; logs in append mode
+     * @param text text to be logged
+     * @param file Path of file to log to
+     * @return true if succeeded, or false if failed
+     */
     public static boolean log(String text, Path file){
         try {
             // open file in append mode

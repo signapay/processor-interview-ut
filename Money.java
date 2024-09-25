@@ -1,33 +1,66 @@
-public class Money {
+/**
+ * Immutable data object class for money
+ */
+public class Money implements Comparable<Money>{
     private int totalCents;
 
-    // accessors
-    public int getDollars(){return totalCents / 100;}
-    public int getCents(){return totalCents % 100;}
-    public int getTotalCents(){return totalCents;}
-    public boolean isNegative(){return !evaluateSign(totalCents);}
+    // accessors -----------------
 
-    // helper methods
+    /**
+     * Get dollar value
+     * @return dollars with sign
+     */
+    public int getDollars(){return totalCents / 100;}
+
+    /**
+     * Get cent value
+     * @return cents with sign
+     */
+    public int getCents(){return totalCents % 100;}
+
+    /**
+     * Get total in cents
+     * @return total in cents with sign
+     */
+    public int getTotalCents(){return totalCents;}
+
+    // helper methods ---------------------
+
+    /**
+     * Evaluate a number's sign as positive or negative
+     * @param element integer value to test
+     * @return false if negative, true if positive
+     */
     public static boolean evaluateSign(int element){if (element < 0) return false; else return true;}
 
-    // private constructor
+    // Constructors --------------------
+
+    /**
+     * Concealed constructor
+     */
     private Money(){};
 
     // factory from string
+
+    /**
+     * Object factory from string
+     * @param input string of monetary amount
+     * @return Money object, or null if failed to convert string
+     */
     public static Money make(String input){
-        input = input.strip();  // remove whitespace
+        input = input.strip();  // remove leading and trailing whitespace
 
         try {
             Money newMoney = new Money();
 
-            // evaluate sign
+            // evaluate sign polarity
             int sign = 1;
             if (input.charAt(0) == '-') {
                 sign = -1; // evaluate sign
                 input = input.substring(1);
             }
 
-            // get decimal
+            // get decimal location
             int decimal = input.indexOf('.');
 
             // case: no decimal (dollars only)
@@ -58,13 +91,24 @@ public class Money {
         return null;
     }
 
-    // factory constructor from total of cents
+    /**
+     * Object factory from total of cents
+     * @param input integer number of total cents
+     * @return new Money object
+     */
     public static Money make(int input){
         Money temp = new Money();
         temp.totalCents = input;
         return temp;
     }
 
+    // other ----------------------
+
+    /**
+     * Add
+     * @param other amount to be added
+     * @return new Money object of sum amount, or this if other is null
+     */
     public Money add(Money other){
         if (other == null) return this;
         Money temp = new Money();
@@ -72,6 +116,11 @@ public class Money {
         return temp;
     }
 
+    /**
+     * Subtract
+     * @param other amount to be subtracted
+     * @return new Money object of difference amount, or this if other is null
+     */
     public Money subtract(Money other){
         if (other == null) return this;
         Money temp = new Money();
@@ -79,17 +128,35 @@ public class Money {
         return temp;
     }
 
-    // comparison function for equals
+    /**
+     * Compare equality of two money objects.
+     * @param other Money object to be compared
+     * @return true if equal value, false otherwise or if other is null.
+     */
     public boolean equals(Money other){
         if (other == null) return false;
         if (this.totalCents == other.totalCents) return true;
         return false;
     }
 
-    // to string
+    /**
+     * Comparison
+     * @param o the object to be compared.
+     * @return integer of comparison. positive is >, 0 is equal, negative is <
+     */
+    @Override
+    public int compareTo(Money o) {
+        if (o == null) throw new NumberFormatException("Cannot compare null to object");
+        return Integer.compare(this.totalCents, o.totalCents);
+    }
+
+    /**
+     * Convert to String
+     * @return String representation of value
+     */
     @Override
     public String toString(){
-        // set sign print
+        // set sign to print
         String signPrint = "-";
         if (evaluateSign(totalCents)) signPrint = "";
 

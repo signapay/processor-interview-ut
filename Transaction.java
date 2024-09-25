@@ -89,7 +89,7 @@ public class Transaction {
         }
 
         // clean leading and trailing whitespace from items
-        for(int i = 0; i < arguments.length; i++) {arguments[i] = arguments[i].trim();}
+        for(int i = 0; i < arguments.length; i++) {arguments[i] = arguments[i].strip();}
 
         // parse 1: account name --------------------
         // requires a minimum length, alphabet characters and - or , or whitespace only.
@@ -104,7 +104,7 @@ public class Transaction {
         for (String component:components) {
             result += component + " ";
         }
-        result = result.trim(); // remove trailing whitespace
+        result = result.strip(); // remove trailing whitespace
         // if illegal number of elements, reject
         if (result.length() < MIN_NAME){
             Log.log("Transaction parse failed; no account name; transaction: " + input);

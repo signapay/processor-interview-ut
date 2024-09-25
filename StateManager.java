@@ -115,10 +115,10 @@ public class StateManager implements ActionListener {
         if (label != null) this.label.setText(message);
     }
 
-    TablePanel tablePanel = null;
-    public void registerTablePanel(TablePanel t){
-        this.tablePanel = t;
-        if (tablePanel != null){
+    ScrollableTable scrollableTable = null;
+    public void registerTablePanel(ScrollableTable t){
+        this.scrollableTable = t;
+        if (scrollableTable != null){
             resetTableRecord();
         }
     }
@@ -127,9 +127,8 @@ public class StateManager implements ActionListener {
         updateTableRecord(db.records);
     }
     private void updateTableRecord(ArrayList<Transaction> list){
-        if (tablePanel != null){
-            tablePanel.updateData(list);
-            tablePanel.revalidate();
+        if (scrollableTable != null){
+            scrollableTable.updateData(list);
             gui.repaint();
         }
     }

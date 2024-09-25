@@ -25,6 +25,6 @@ public class Main {
         //db.clearRecords();
 
         // test file load
-        System.out.println(db.records);
+        //System.out.println(db.records);
     }
 }
