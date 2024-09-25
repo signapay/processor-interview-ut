@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Database {
-    public static String persistenceFile = "test.csv";//".backup.csv";
+    public static String persistenceFile = ".backup.csv";
 
     // internal memory
     public ArrayList<Transaction> records = new ArrayList<>();
@@ -19,7 +19,7 @@ public class Database {
     public boolean readFromFile(String file){
         // open specified file and read valid transactions to record
         try {
-            Scanner scan = new Scanner(new FileInputStream(persistenceFile));
+            Scanner scan = new Scanner(new FileInputStream(file));
             Transaction transaction = null;
             while (scan.hasNext()){
                 transaction = Transaction.make(scan.nextLine());
@@ -58,29 +58,28 @@ public class Database {
     }
 
     // remove file
-    public boolean removeFile(String filename){
-        File file = new File(filename);
-
+    public boolean removeFile(File file){
         // test if file is file
         if (file.isFile()){
             try{
                 file.delete();  // delete file
+                Log.log("Deleted file '" + file + "'");
                 return true;
             }
             catch (Exception e){
-                Log.log("Cannot delete file '" + filename + "'; error occurred when trying to delete.");
+                Log.log("Cannot delete file '" + file + "'; error occurred when trying to delete.");
                 return false;
             }
         }
         else{
-            Log.log("Cannot delete file '" + filename + "'; file does not exist.");
+            Log.log("Cannot delete file '" + file + "'; file does not exist.");
             return true;
         }
     }
 
     // clear transactions
     public boolean clearRecords(){
-        if (removeFile(persistenceFile)){
+        if (removeFile(new File(persistenceFile))){
             records.clear();
             return true;
         }

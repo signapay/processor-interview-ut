@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 
 // class for managing state of program
 public class StateManager implements ActionListener {
@@ -46,6 +47,9 @@ public class StateManager implements ActionListener {
     JButton clearButton = null;
     public void registerClearButton(JButton button) {
         clearButton = button;
+        if (db.hasRecords()){
+            if(clearButton != null) clearButton.setEnabled(true);
+        }
     }
 
     public boolean hasFile(){
@@ -73,12 +77,33 @@ public class StateManager implements ActionListener {
 
         // file open button
         if(e.getActionCommand().equals("read_file")){
+            // read to db
+            if(selectedFile.isFile()) {
+                db.readFromFile(selectedFile.toString());
 
+                // update table
+                table.setRecords((ArrayList<Transaction>) db.records.clone());
+
+                // rerender
+                gui.repaint();
+
+                // revoke file opening
+                setMessage("Read from file '" + selectedFile + "'");
+                if (openButton != null) openButton.setEnabled(false);
+
+                // permit erasure
+                if (db.hasRecords()){
+                    if(clearButton != null) clearButton.setEnabled(true);
+                }
+            }
         }
 
         // file clear button
         if(e.getActionCommand().equals("clear_record")){
-
+            if (db.hasRecords()){
+                db.clearRecords();
+                if(clearButton != null) clearButton.setEnabled(false);
+            }
         }
     }
 
@@ -86,5 +111,11 @@ public class StateManager implements ActionListener {
     public void registerButtonLabel(JLabel label) {
         this.label = label;
         if (label != null) this.label.setText(message);
+    }
+
+    Table table = null;
+    public void registerTable(Table table) {
+        this.table = table;
+        table.setRecords((ArrayList<Transaction>) db.records.clone());
     }
 }

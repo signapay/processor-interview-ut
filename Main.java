@@ -22,7 +22,7 @@ public class Main {
         gui.initialize(db);
 
         // clear files
-        db.clearRecords();
+        //db.clearRecords();
 
         // test file load
         System.out.println(db.records);

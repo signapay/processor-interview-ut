@@ -31,8 +31,15 @@ public class GUI {
             top.add(Buttons.generateClearRecordButton(state));
             top.add(Buttons.generateButtonLabel(state));
 
+            // bottom pane
+            JPanel bottom = new JPanel();
+            JTable table = new JTable(new Table(state));
+            table.setFillsViewportHeight(true);
+            bottom.add(new JScrollPane(table));
+            //jframe.add(new JScrollPane(table));
+
             // add split pane
-            JSplitPane pane = generateSeparator(top, new JPanel());
+            JSplitPane pane = generateSeparator(top, bottom);
             jframe.add(pane);
 
             // render jframe
