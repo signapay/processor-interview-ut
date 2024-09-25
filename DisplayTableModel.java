@@ -1,4 +1,3 @@
-import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 
@@ -12,39 +11,66 @@ public class DisplayTableModel extends AbstractTableModel {
     // name set
     private ArrayList<String> titles = new ArrayList<>();
 
-    public void setRecords(ArrayList<Transaction> t){
-        records = t;
-        this.fireTableDataChanged();
-    }
-    String[] names = {"Account Name", "Card Number", "Amount", "Type", "Description", "Target Card"};
-
+    /**
+     * Constructor
+     */
     public DisplayTableModel(){}
 
+    /**
+     * Update table contents to reflect new content
+     * @param records records to display
+     * @param titles titles to display
+     */
+    public void setRecords(ArrayList<Transaction> records, ArrayList<String> titles){
+        this.records = records;
+        this.titles = titles;
+        this.fireTableDataChanged();
+    }
+
+    /**
+     * Get number of rows
+     * @return number of rows
+     */
     @Override
     public int getRowCount() {
         return records.size();
     }
 
+    /**
+     * Get number of columns
+     * @return number of columns
+     */
     @Override
     public int getColumnCount() {
-        return 6;
+        return titles.size();
     }
 
+    /**
+     * Column name retrieval
+     * @param columnIndex  the column being queried
+     * @return name of column
+     */
     @Override
     public String getColumnName(int columnIndex) {
-        return names[columnIndex];
+        return titles.get(columnIndex);
     }
 
+    /**
+     * Column class retrieval
+     * @param columnIndex  the column being queried
+     * @return class of content
+     */
     @Override
     public Class<?> getColumnClass(int columnIndex) {
         return getValueAt(0,columnIndex).getClass();
     }
 
-    @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return false;
-    }
-
+    /**
+     * Retrieve value of specified column location
+     * @param rowIndex        the row whose value is to be queried
+     * @param columnIndex     the column whose value is to be queried
+     * @return value at location
+     */
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         Transaction transaction = records.get(rowIndex);    // get row
@@ -59,18 +85,14 @@ public class DisplayTableModel extends AbstractTableModel {
         return null;
     }
 
+    /**
+     * Query editable status of cell
+     * @param rowIndex  the row being queried
+     * @param columnIndex the column being queried
+     * @return permission to edit status
+     */
     @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-
-    }
-
-    @Override
-    public void addTableModelListener(TableModelListener l) {
-
-    }
-
-    @Override
-    public void removeTableModelListener(TableModelListener l) {
-
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return false;
     }
 }

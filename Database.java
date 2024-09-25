@@ -42,7 +42,11 @@ public class Database {
             }
             return true;
         } catch (FileNotFoundException e) {
-            Log.log("Failed to open and read from file '" + file + "'.");
+            Log.log("Failed to open and read from file '" + file + "'; file not found.");
+            return false;
+        }
+        catch (Exception e){
+            Log.log("Failed to open and read from file '" + file + "'; unknown error.");
             return false;
         }
     }

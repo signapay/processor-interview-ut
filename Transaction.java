@@ -214,7 +214,7 @@ public class Transaction {
      */
     public String toCsv() {
         if (hasTargetCard) return toString();   // add trailing comma if missing
-        return toString() + ",";    // comma separation for relevant records
+        return this + ",";    // comma separation for relevant records
     }
 
     /**
@@ -226,8 +226,8 @@ public class Transaction {
         // if no target card number, omit element and associated comma
         String temp = "";
         if (hasTargetCard) temp = "," + targetCardNumber;
-        // string builder
-        return new StringBuilder().append(accountName).append(",").append(cardNumber).append(",").
-        append(transactionAmount).append(",").append(transactionType).append(",").append(description).append(temp).toString();
+        // string
+        return accountName + "," + cardNumber + "," +
+                transactionAmount + "," + transactionType + "," + description + temp;
     }
 }

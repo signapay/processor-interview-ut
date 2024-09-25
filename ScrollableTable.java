@@ -47,11 +47,11 @@ public class ScrollableTable extends JScrollPane {
      * Set data in table to new arrayList of data
      * @param list ArrayList of data to be used in table
      */
-    public void updateData(ArrayList<Transaction> list){
+    public void updateData(ArrayList<Transaction> list, ArrayList<String> names){
         if (list == null) return;// reject null values
 
         // set table contents to copy of given list
-        tableModel.setRecords((ArrayList<Transaction>) list.clone());
+        tableModel.setRecords((ArrayList<Transaction>) list.clone(), names);
         updateGui();    // mark table for redraw
     }
 

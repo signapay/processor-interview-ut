@@ -6,7 +6,7 @@ public class Main {
      * Calling function for program
      * @param args n/a
      */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
 
         // internal state
         Database db = new Database(true);

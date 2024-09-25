@@ -1,17 +1,26 @@
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Class responsible for program window
+ */
 public class GUI {
     private JFrame jframe = null;
     private StateManager state;
 
+    /**
+     * Launch program window
+     * @param db Database object used by window
+     */
     public void initialize(Database db){
+        // attempt to use native system window design
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             Log.log("Unable to support native look and feel. Using default appearance.");
         }
 
+        // permit initialization only once
         if (jframe == null){
             // create jframe
             jframe = new JFrame("Interview Program Test");
@@ -30,13 +39,13 @@ public class GUI {
             top.add(Buttons.generateClearRecordButton(state));
             top.add(Buttons.generateButtonLabel(state));
 
-            // bottom
+            // bottom pane
             ScrollableTable table = ScrollableTable.make(state);
 
             JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, top, table);
             pane.setOneTouchExpandable(true);
 
-            // set minimum size
+            // set minimum size for pane components
             Dimension min = new Dimension(100,50);
             top.setMinimumSize(min);
             table.setMinimumSize(min);
@@ -49,20 +58,5 @@ public class GUI {
             // render jframe
             jframe.setVisible(true);
         }
-    }
-
-    private static JSplitPane generateSeparator(JPanel top, JPanel bottom){
-        JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, top, bottom);
-        pane.setOneTouchExpandable(true);
-
-        // set minimum size
-        Dimension min = new Dimension(100,50);
-        top.setMinimumSize(min);
-        bottom.setMinimumSize(min);
-
-        // set starting proportions
-        pane.setDividerLocation(200);
-
-        return pane;
     }
 }
