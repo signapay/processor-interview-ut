@@ -40,7 +40,7 @@ public class GUI {
             // top pane
             JPanel top = new JPanel();
             top.add(Buttons.generateFileButton(state));
-            top.add(Buttons.generateOpenButton(state));
+            //top.add(Buttons.generateOpenButton(state));
             top.add(Buttons.generateClearRecordButton(state));
             top.add(Buttons.generateButtonLabel(state));
 

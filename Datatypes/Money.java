@@ -1,4 +1,5 @@
 package Datatypes;
+
 import Log.Log;
 
 /**
