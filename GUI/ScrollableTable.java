@@ -4,7 +4,9 @@ import DataManager.StateManager;
 import Datatypes.Transaction;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Table scrolling panel
@@ -56,7 +58,10 @@ public class ScrollableTable extends JScrollPane {
         if (list == null) return;// reject null values
 
         // set table contents to copy of given list
-        tableModel.setRecords((ArrayList<Transaction>) list.clone());
+        tableModel.setRecords((ArrayList<Transaction>) list.clone(), new ArrayList<>(Arrays.asList(
+                "Account Name", "Card Number", "Amount", "Type", "Description", "Target Card")));
+        table.setModel(tableModel);
+
         updateGui();    // mark table for redraw
     }
 
@@ -64,7 +69,10 @@ public class ScrollableTable extends JScrollPane {
      * Mark table for rerendering when redrawn
      */
     public void updateGui(){
-        table.revalidate();
-        this.revalidate();
+        table.tableChanged(new TableModelEvent(tableModel, TableModelEvent.HEADER_ROW));
+//        table.updateUI();
+//        table.revalidate();
+//        table.repaint();
+//        this.revalidate();
     }
 }
