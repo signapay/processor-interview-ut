@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import axios from 'axios';
 
 const App = () => {
   const [file, setFile] = useState(null);
   const [report, setReport] = useState(null);
+  const fileInputRef = useRef(null);
+
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -24,8 +26,18 @@ const App = () => {
     }
   };
 
-  const handleReset = () => {
-    setReport(false);
+  const handleReset = async () => {
+    try {
+      const response = await axios.post('http://localhost:5000/reset');
+      alert(response.data.message);
+      setReport(null); // Clear report after reset
+      setFile(null);
+      if (fileInputRef.current) { 
+        fileInputRef.current.value = null;  // Clear file input
+      }
+    } catch (error) {
+      console.error('Error resetting system:', error);
+    }
   };
 
   const handleFetchReport = async () => {
@@ -118,7 +130,7 @@ const App = () => {
     <div>
       <h1>Transaction Processor</h1>
       
-      <input type="file" onChange={handleFileChange} />
+      <input type="file" onChange={handleFileChange} ref={fileInputRef}/>
       <button onClick={handleFileUpload}>Upload File</button>
       <button onClick={handleReset}>Reset System</button>
       <button onClick={handleFetchReport}>Show Report</button>

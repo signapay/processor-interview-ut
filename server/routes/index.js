@@ -135,5 +135,12 @@ const generateCollectionsReport = (accounts) => {
   return collections;
 };
 
+// Handle reset system
+router.post('/reset', (req, res) => {
+  transactions = [];
+  badTransactions = [];
+  res.json({ message: 'System reset successfully' });
+});
+
 
 module.exports = router;
