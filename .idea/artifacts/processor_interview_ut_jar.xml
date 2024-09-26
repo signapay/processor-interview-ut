@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="processor-interview-ut:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/processor_interview_ut_jar</output-path>
+    <root id="archive" name="processor-interview-ut.jar">
+      <element id="module-output" name="processor-interview-ut" />
+    </root>
+  </artifact>
+</component>
