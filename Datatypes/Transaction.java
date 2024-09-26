@@ -6,7 +6,7 @@ import Log.Log;
  * Transaction data storage object (immutable).
  * Fields: accountName, cardNumber, transactionAmount, transactionType, description, targetCardNumber
  */
-public class Transaction {
+public class Transaction implements toCSV {
     private static final int CARD_LENGTH = 16;
     private static final int MIN_NAME = 3;
 
@@ -218,7 +218,7 @@ public class Transaction {
      */
     public String toCsv() {
         if (hasTargetCard) return toString();   // add trailing comma if missing
-        return toString() + ",";    // comma separation for relevant records
+        return this + ",";    // comma separation for relevant records
     }
 
     /**
@@ -230,8 +230,8 @@ public class Transaction {
         // if no target card number, omit element and associated comma
         String temp = "";
         if (hasTargetCard) temp = "," + targetCardNumber;
-        // string builder
-        return new StringBuilder().append(accountName).append(",").append(cardNumber).append(",").
-        append(transactionAmount).append(",").append(transactionType).append(",").append(description).append(temp).toString();
+        // string
+        return accountName + "," + cardNumber + "," +
+                transactionAmount + "," + transactionType + "," + description + temp;
     }
 }

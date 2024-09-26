@@ -1,5 +1,4 @@
 package Datatypes;
-
 import Log.Log;
 
 /**
@@ -42,7 +41,7 @@ public class Money implements Comparable<Money>{
     /**
      * Concealed constructor
      */
-    private Money(){};
+    private Money(){}
 
     // factory from string
 
@@ -115,9 +114,7 @@ public class Money implements Comparable<Money>{
      */
     public Money add(Money other){
         if (other == null) return this;
-        Money temp = new Money();
-        temp.totalCents = this.totalCents + other.totalCents;
-        return temp;
+        return Money.make(this.totalCents + other.totalCents);
     }
 
     /**
@@ -127,9 +124,7 @@ public class Money implements Comparable<Money>{
      */
     public Money subtract(Money other){
         if (other == null) return this;
-        Money temp = new Money();
-        temp.totalCents = this.totalCents - other.totalCents;
-        return temp;
+        return Money.make(this.totalCents - other.totalCents);
     }
 
     /**
@@ -139,8 +134,7 @@ public class Money implements Comparable<Money>{
      */
     public boolean equals(Money other){
         if (other == null) return false;
-        if (this.totalCents == other.totalCents) return true;
-        return false;
+        return this.totalCents == other.totalCents;
     }
 
     /**
