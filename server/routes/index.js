@@ -83,4 +83,57 @@ const isValidTransaction = (transaction) => {
   return true;
 };
 
+// API to get report
+router.get('/report', (req, res) => {
+  const accounts = generateAccountReport(transactions);
+  // const collections = transactions.filter(t => parseFloat(t['Transaction Amount']) < 0);  // Check for negative balance
+  const collections = generateCollectionsReport(accounts);
+  res.json({ accounts, collections, badTransactions });
+});
+
+// Generate report for accounts
+const generateAccountReport = (transactions) => {
+  return transactions.reduce((acc, transaction) => {
+    const account = acc[transaction['Account Name']] || { cards: {} };
+    const card = account.cards[transaction['Card Number']] || { amount: 0 };
+    
+    // Add transaction amount to card balance
+    if (transaction['Transaction Type'] === 'Credit'){
+      card.amount += parseFloat(transaction['Transaction Amount']);
+    } else {
+      card.amount -= parseFloat(transaction['Transaction Amount']);
+    }
+    
+    card.amount = parseFloat(card.amount).toFixed(2);
+
+    account.cards[transaction['Card Number']] = card;
+    
+    acc[transaction['Account Name']] = account;
+    return acc;
+  }, {});
+};
+
+const generateCollectionsReport = (accounts) => {
+  let collections = [];
+
+  // Iterate over each account in the report
+  Object.entries(accounts).forEach(([accountName, accountData]) => {
+    // Iterate over each card in the account
+    Object.entries(accountData.cards).forEach(([cardNumber, cardData]) => {
+      // Check if the card amount is negative
+      if (cardData.amount < 0) {
+        // Add the card to the collections list
+        collections.push({
+          'Account Name': accountName,
+          'Card Number': cardNumber,
+          'Amount': cardData.amount
+        });
+      }
+    });
+  });
+
+  return collections;
+};
+
+
 module.exports = router;

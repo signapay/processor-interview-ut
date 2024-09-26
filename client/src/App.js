@@ -28,8 +28,13 @@ const App = () => {
     setReport(false);
   };
 
-  const handleFetchReport = () => {
-    setReport(true);
+  const handleFetchReport = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/report');
+      setReport(response.data);
+    } catch (error) {
+      console.error('Error fetching report:', error);
+    }
   };
 
   const renderAccountsTable = () => {
@@ -43,6 +48,15 @@ const App = () => {
           </tr>
         </thead>
         <tbody>
+          {Object.entries(report.accounts).map(([accountName, accountData]) => (
+            Object.entries(accountData.cards).map(([cardNumber, cardData]) => (
+              <tr key={`${accountName}-${cardNumber}`}>
+                <td>{accountName}</td>
+                <td>{cardNumber}</td>
+                <td>{cardData.amount}</td>
+              </tr>
+            ))
+          ))}
         </tbody>
       </table>
     );
@@ -59,6 +73,13 @@ const App = () => {
           </tr>
         </thead>
         <tbody>
+          {report.collections.map((transaction, index) => (
+            <tr key={index}>
+              <td>{transaction['Account Name']}</td>
+              <td>{transaction['Card Number']}</td>
+              <td>{transaction['Amount']}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     );
@@ -78,6 +99,16 @@ const App = () => {
           </tr>
         </thead>
         <tbody>
+          {report.badTransactions.map((transaction, index) => (
+            <tr key={index}>
+              <td>{transaction['Account Name'] || 'N/A'}</td>
+              <td>{transaction['Card Number'] || 'N/A'}</td>
+              <td>{transaction['Transaction Amount'] || 'N/A'}</td>
+              <td>{transaction['Transaction Type'] || 'N/A'}</td>
+              <td>{transaction['Description'] || 'N/A'}</td>
+              <td>{transaction['Target Card Number'] || 'N/A'}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     );
