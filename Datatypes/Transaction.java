@@ -6,7 +6,7 @@ import Log.Log;
  * Datatypes.Transaction data storage object (immutable).
  * Fields: accountName, cardNumber, transactionAmount, transactionType, description, targetCardNumber
  */
-public class Transaction {
+public class Transaction implements toCSV {
     private static final int CARD_LENGTH = 16;
     private static final int MIN_NAME = 3;
 

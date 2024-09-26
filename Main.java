@@ -1,4 +1,4 @@
-import DataManage.Database;
+import DataManage.DataManager;
 
 /**
  * Main class
@@ -11,7 +11,7 @@ public class Main {
     public static void main(String[] args) {
 
         // internal state
-        Database db = new Database(true);
+        DataManager db = new DataManager();
 
         // load gui
         GUI gui = new GUI();

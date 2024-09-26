@@ -14,7 +14,7 @@ import java.util.Arrays;
  * Class for managing state of program and gui window
  */
 public class StateManager implements ActionListener {
-    private final Database db;
+    private final DataManager db;
     private final JFrame gui;
 
     /**
@@ -22,7 +22,7 @@ public class StateManager implements ActionListener {
      * @param db database object for use with program
      * @param gui gui object spawning state manager (used to invoke redraw)
      */
-    public StateManager(Database db, JFrame gui){
+    public StateManager(DataManager db, JFrame gui){
         this.db = db;
         this.gui = gui;
     }
@@ -112,13 +112,30 @@ public class StateManager implements ActionListener {
             if (val == JFileChooser.APPROVE_OPTION){
                 updateSelectedFile(fc.getSelectedFile());   // select file
                 selectedFile = fc.getSelectedFile();
+                // read to db
+                if (db.readFromFile(selectedFile)) {
+                    // write data
+                    db.save();
+
+                    // update table
+                    resetTableRecord();
+
+                    // revoke file opening ability
+                    setMessage("Read from file '" + selectedFile + "'");
+                    if (openButton != null) openButton.setEnabled(false);
+
+                    // permit erasure
+                    if (db.hasRecords()) {
+                        if (clearButton != null) clearButton.setEnabled(true);
+                    }
+                }
             }
         }
 
         // file open button
         if(e.getActionCommand().equals("read_file")){
             // read to db
-            if (db.readFromFile(selectedFile.toString())) {
+            if (db.readFromFile(selectedFile)) {
                 // write data
                 db.save();
 
@@ -168,6 +185,7 @@ public class StateManager implements ActionListener {
     private void updateTableRecord(ArrayList<Transaction> list){
         if (scrollableTable != null){
             scrollableTable.updateData(list, defaultColumnNames);
+            //gui.revalidate();
             gui.repaint();
         }
     }
