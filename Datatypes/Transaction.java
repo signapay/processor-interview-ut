@@ -1,3 +1,7 @@
+package Datatypes;
+
+import Log.Log;
+
 /**
  * Transaction data storage object (immutable).
  * Fields: accountName, cardNumber, transactionAmount, transactionType, description, targetCardNumber

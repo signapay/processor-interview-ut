@@ -1,3 +1,7 @@
+package Datatypes;
+
+import Log.Log;
+
 /**
  * Immutable data object class for money
  */

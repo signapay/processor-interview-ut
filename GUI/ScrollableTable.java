@@ -1,3 +1,8 @@
+package GUI;
+
+import Datatypes.StateManager;
+import Datatypes.Transaction;
+
 import javax.swing.*;
 import java.util.ArrayList;
 

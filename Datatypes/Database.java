@@ -1,3 +1,7 @@
+package Datatypes;
+
+import Log.Log;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;

@@ -1,3 +1,7 @@
+package GUI;
+
+import Datatypes.StateManager;
+
 import javax.swing.*;
 
 /**

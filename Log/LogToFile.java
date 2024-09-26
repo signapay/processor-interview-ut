@@ -1,3 +1,5 @@
+package Log;
+
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.nio.file.Path;
