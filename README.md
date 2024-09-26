@@ -38,7 +38,7 @@ The software processes transactions provided from a .csv list and reports inform
 - Button for clearing memory
   - also clears the working memory cache in ```.backup.csv```
 - Table for displaying working memory of files
-- GUI.Buttons to toggle between table views
+- Buttons to toggle between table views
 - Button for optional persistence of views to files
 
 ### Table Views
@@ -60,7 +60,8 @@ The software processes transactions provided from a .csv list and reports inform
 
 ## Program Documentation
 
-### Datatypes.Transaction Structure
+### Transaction Structure
+
 | Field              | Type   | Description                                                       |
 |--------------------|--------|-------------------------------------------------------------------|
 | Account Name       | Text   | The name of the account                                           |

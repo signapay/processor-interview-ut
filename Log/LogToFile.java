@@ -12,7 +12,7 @@ public class LogToFile {
     public static boolean errorNotReported = true;
 
     /**
-     * Log.Log text to file; logs in append mode
+     * Log text to file; logs in append mode
      * @param text text to be logged
      * @param file Path of file to log to
      * @return true if succeeded, or false if failed
@@ -33,7 +33,7 @@ public class LogToFile {
         catch(Exception e) {
             // report error; only print once to not clog console
             if (errorNotReported) {
-                System.out.println("NOTICE: Log.Log file " + file + " is unavailable. Logging to file failed. Check log file path.");
+                System.out.println("NOTICE: Log file " + file + " is unavailable. Logging to file failed. Check log file path.");
                 errorNotReported = false; // permits only one printing regardless of log file titles for simplicity
             }
         }

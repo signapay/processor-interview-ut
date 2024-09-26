@@ -2,6 +2,7 @@ package GUI;
 
 import Datatypes.Transaction;
 
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 
@@ -46,7 +47,7 @@ public class DisplayTableModel extends AbstractTableModel {
      */
     @Override
     public int getColumnCount() {
-        return titles.size();
+       return Math.max(1,titles.size());
     }
 
     /**
@@ -56,6 +57,8 @@ public class DisplayTableModel extends AbstractTableModel {
      */
     @Override
     public String getColumnName(int columnIndex) {
+        //return "title";
+        if (titles.size() == 0) return "[nothing to display]";
         return titles.get(columnIndex);
     }
 
@@ -87,6 +90,21 @@ public class DisplayTableModel extends AbstractTableModel {
             case 5: return transaction.getTargetCardNumber();
         }
         return null;
+    }
+
+    @Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+
+    }
+
+    @Override
+    public void addTableModelListener(TableModelListener l) {
+
+    }
+
+    @Override
+    public void removeTableModelListener(TableModelListener l) {
+
     }
 
     /**

@@ -1,9 +1,10 @@
 package GUI;
 
-import DataManage.StateManager;
+import DataManager.StateManager;
 import Datatypes.Transaction;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
 import java.util.ArrayList;
 
 /**
@@ -24,7 +25,7 @@ public class ScrollableTable extends JScrollPane {
     /**
      * Factory constructor for scrollable table
      * @param state State object to register the object to, or null if no state desired
-     * @return new GUI.ScrollableTable object
+     * @return new ScrollableTable object
      */
     public static ScrollableTable make(StateManager state){
         // construction chain: table model
@@ -64,7 +65,10 @@ public class ScrollableTable extends JScrollPane {
      * Mark table for rerendering when redrawn
      */
     public void updateGui(){
-        table.revalidate();
-        this.revalidate();
+        table.tableChanged(new TableModelEvent(tableModel, TableModelEvent.HEADER_ROW));
+//        table.updateUI();
+//        table.revalidate();
+//        table.repaint();
+//        this.revalidate();
     }
 }

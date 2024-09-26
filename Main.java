@@ -1,4 +1,4 @@
-import DataManage.DataManager;
+import DataManager.DataManager;
 
 /**
  * Main class
@@ -11,11 +11,11 @@ public class Main {
     public static void main(String[] args) {
 
         // internal state
-        DataManager db = new DataManager();
+        DataManager dm = new DataManager();
 
         // load gui
         GUI gui = new GUI();
-        gui.initialize(db);
+        gui.initialize(dm);
 
         // test file load
         //System.out.println(db.records);

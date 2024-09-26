@@ -1,7 +1,7 @@
-import DataManage.DataManager;
-import DataManage.StateManager;
-import GUI.*;
+import DataManager.DataManager;
+import DataManager.StateManager;
 import Log.Log;
+import GUI.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +15,7 @@ public class GUI {
 
     /**
      * Launch program window
-     * @param db DataManage.Database object used by window
+     * @param db Database object used by window
      */
     public void initialize(DataManager db){
         // attempt to use native system window design
