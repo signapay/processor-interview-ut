@@ -1,4 +1,5 @@
-import DataManager.Database;
+import DataManager.DataManager;
+import DataManager.DataManager;
 import DataManager.StateManager;
 import Log.Log;
 import GUI.*;
@@ -10,7 +11,7 @@ public class GUI {
     private JFrame jframe = null;
     private StateManager state;
 
-    public void initialize(Database db){
+    public void initialize(DataManager db){
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {

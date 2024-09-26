@@ -1,79 +1,59 @@
 package DataManager;
-
-import Datatypes.Transaction;
+import Datatypes.toCSV;
 import Log.Log;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Scanner;
 
-/**
- * Record management class
- */
-public class Database {
-    // internal persistence location
-    public static final String persistenceFile = ".backup.csv";
-
+public class Database<T> {
     // internal memory
-    public ArrayList<Transaction> records = new ArrayList<>();
+    public ArrayList<T> records = new ArrayList<>();
+
+    // internal persistence location
+    public final File persistenceFile;
 
     /**
      * Constructor for database
-     * @param read boolean for reading from persistence file (true for yes)
+     * @param file file to read from, or null
      */
-    public Database(boolean read){
-        if (read){
+    public Database(File file){
+        persistenceFile = file;
+        if (file != null){
             // read file if constructor requests
             readFromFile(persistenceFile);
         }
     }
 
-    /**
-     * Add records from file
-     * @param file File to read from
-     * @return boolean indicating success
-     */
-    public boolean readFromFile(String file){
-        // open specified file and read valid transactions to record
-        try {
-            Scanner scan = new Scanner(new FileInputStream(file));
-            Transaction transaction;
-            // for each record, attempt to read as transaction
-            while (scan.hasNext()){
-                transaction = Transaction.make(scan.nextLine());
-                if (transaction != null){
-                    records.add(transaction);
-                }
-            }
-            return true;
-        } catch (FileNotFoundException e) {
-            Log.log("Failed to open and read from file '" + file + "'.");
-            return false;
-        }
-    }
+    // read from file ----------------
+    public boolean readFromFile(File file){return true;}
 
-    /**
-     * Save records to persistence file
-     * @return boolean indicating success
-     */
-    public boolean save(){
-        return writeToFile(new File(persistenceFile));
-    }
-
+    // write to file -----------------
     /**
      * Write record state to specified file
      * @param file File to write to (overwrites)
      * @return boolean indicating success
      */
     public boolean writeToFile(File file){
+        // do not write if nothing to write
+        if (records.isEmpty()) return true;
         // open writing
         try{
             // open file in overwrite mode
             PrintWriter writer = new PrintWriter(new FileOutputStream(file.toString(), false));
 
             // record information
-            for (Transaction item : records){
-                writer.println(item.toCsv()); // write to file
+            //case: implements toCSV
+            if (records.get(0) instanceof toCSV){
+                for (T item : records){
+                    writer.println(((toCSV)item).toCsv()); // write to file
+                }
+            }
+            else{
+                for (T item : records){
+                    writer.println(item); // write to file
+                }
             }
 
             // close file
@@ -88,11 +68,39 @@ public class Database {
     }
 
     /**
+     * Save records to persistence file
+     * @return boolean indicating success
+     */
+    public boolean save(){
+        if (persistenceFile != null) return writeToFile(persistenceFile);
+        return true;
+    }
+
+    // remove records ----------------
+    /**
+     * Clear internal record state. Erases dynamic state and persistent record.
+     * @return boolean indicating success
+     */
+    public boolean clearRecords(){
+        if (removeFile(persistenceFile)){
+            records.clear();
+            return true;
+        }
+        else{
+            Log.log("Cannot clear memory due to file persistence.");
+            return false;
+        }
+    }
+
+    // control data ------------------
+
+    /**
      * delete file from filesystem
      * @param file File to remove
      * @return boolean indicating success
      */
     public boolean removeFile(File file){
+        if (file == null) return false;
         // test if file is file
         if (file.isFile()){
             try{
@@ -112,21 +120,6 @@ public class Database {
     }
 
     /**
-     * Clear internal record state. Erases dynamic state and persistent record.
-     * @return boolean indicating success
-     */
-    public boolean clearRecords(){
-        if (removeFile(new File(persistenceFile))){
-            records.clear();
-            return true;
-        }
-        else{
-            Log.log("Cannot clear memory due to file persistence.");
-            return false;
-        }
-    }
-
-    /**
      * Determine if the record state has any records
      * @return true if records, false if no records
      */
@@ -134,5 +127,6 @@ public class Database {
         if (records.isEmpty()) return false;
         return true;
     }
+
 
 }

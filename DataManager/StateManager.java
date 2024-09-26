@@ -11,10 +11,10 @@ import java.util.ArrayList;
 
 // class for managing state of program
 public class StateManager implements ActionListener {
-    private Database db;
+    private DataManager db;
     private JFrame gui;
 
-    public StateManager(Database db, JFrame gui){
+    public StateManager(DataManager db, JFrame gui){
         this.db = db;
         this.gui = gui;
     }
@@ -84,7 +84,7 @@ public class StateManager implements ActionListener {
         if(e.getActionCommand().equals("read_file")){
             // read to db
             if(selectedFile.isFile()) {
-                if (db.readFromFile(selectedFile.toString())) {
+                if (db.readFromFile(selectedFile)) {
                     // write data
                     db.save();
 
