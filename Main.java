@@ -1,4 +1,4 @@
-import Datatypes.Database;
+import DataManager.Database;
 
 /**
  * Main class

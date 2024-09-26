@@ -1,6 +1,6 @@
-package Datatypes;
+package DataManager;
 
-import Datatypes.Database;
+import Datatypes.Transaction;
 import GUI.ScrollableTable;
 
 import javax.swing.*;

@@ -1,5 +1,6 @@
-package Datatypes;
+package DataManager;
 
+import Datatypes.Transaction;
 import Log.Log;
 
 import java.io.*;

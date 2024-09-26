@@ -1,5 +1,5 @@
-import Datatypes.Database;
-import Datatypes.StateManager;
+import DataManager.Database;
+import DataManager.StateManager;
 import Log.Log;
 import GUI.*;
 
