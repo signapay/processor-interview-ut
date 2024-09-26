@@ -82,12 +82,12 @@ public class Database<T> {
      * @return boolean indicating success
      */
     public boolean clearRecords(){
+        records.clear();
         if (removeFile(persistenceFile)){
-            records.clear();
             return true;
         }
         else{
-            Log.log("Cannot clear memory due to file persistence.");
+            Log.log("Cannot clear persistent memory due to file persistence.");
             return false;
         }
     }

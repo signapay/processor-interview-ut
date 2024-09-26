@@ -14,9 +14,9 @@ public class Buttons{
      * @return Button for file selection
      */
     public static JButton generateFileButton(StateManager state){
-        JButton button = new JButton("Select File");
-        button.setActionCommand("select_file");
-        button.setToolTipText("Choose a CSV file from the filesystem to load data from.");
+        JButton button = generateButton("Select File",
+                "select_file",
+                "Choose a CSV file from the filesystem to load data from.");
 
         if (state != null) button.addActionListener(state);
 
@@ -29,11 +29,9 @@ public class Buttons{
      * @return Button for file opening
      */
     public static JButton generateOpenButton(StateManager state){
-        JButton button = new JButton("Load File");
-        button.setActionCommand("read_file");
-        button.setToolTipText("Load selected file into memory (appends contents to transactions already found).");
-
-        button.setEnabled(state.hasFile());
+        JButton button = generateButton("Load File",
+                "read_file",
+                "Load selected file into memory (appends contents to transactions already found).");
 
         if (state != null) {
             state.registerOpenButton(button);
@@ -49,9 +47,9 @@ public class Buttons{
      * @return Button for record erasing
      */
     public static JButton generateClearRecordButton(StateManager state){
-        JButton button = new JButton("Clear Records");
-        button.setActionCommand("clear_record");
-        button.setToolTipText("Clear memory. Warning: will clear persistence file.");
+        JButton button = generateButton("Clear Records",
+                "clear_record",
+                "Clear memory. Warning: will clear persistence file.");
 
         if (state != null) {
             state.registerClearButton(button);
@@ -71,5 +69,65 @@ public class Buttons{
         if (state != null) state.registerButtonLabel(label);
 
         return label;
+    }
+
+    public static JButton generateTableTransactionButton(StateManager state){
+        JButton button = generateButton("Transactions",
+                "table_transaction",
+                "View all successful transactions.");
+
+        if (state != null) {
+            state.registerTableTransactionButton(button);
+            button.addActionListener(state);
+        }
+
+        return button;
+    }
+
+    public static JButton generateTableFailedTransactionButton(StateManager state){
+        JButton button = generateButton("Failed Transactions",
+                "table_failures",
+                "View the failed transactions (includes both bad parse and logic error).");
+
+        if (state != null) {
+            state.registerTableFailuresButton(button);
+            button.addActionListener(state);
+        }
+
+        return button;
+    }
+
+    public static JButton generateTableAccountButton(StateManager state){
+        JButton button = generateButton("Accounts",
+                "table_account",
+                "View all accounts.");
+
+        if (state != null) {
+            state.registerTableAccountButton(button);
+            button.addActionListener(state);
+        }
+
+        return button;
+    }
+
+    public static JButton generateTableBadCardButton(StateManager state){
+        JButton button = generateButton("Accounts Failing Audit",
+                "table_audit",
+                "View cards failing audit (those with negative balances).");
+
+        if (state != null) {
+            state.registerTableAuditButton(button);
+            button.addActionListener(state);
+        }
+
+        return button;
+    }
+
+    public static JButton generateButton(String text, String actionCommand, String tooltip){
+        JButton button = new JButton(text);
+        button.setActionCommand(actionCommand);
+        button.setToolTipText(tooltip);
+
+        return button;
     }
 }

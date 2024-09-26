@@ -52,7 +52,8 @@ The software processes transactions provided from a .csv list and reports inform
   - name, card number, balance
   - specifically accounts with poor standing
 - Failed transaction parses (strings)
-
+  - It was assumed that transaction target card to match a known account
+  - 
 ### Error Logging
 
 - Errors are logged to ```log.txt``` and include failed type conversions, failed file reads, and logging of deletion operations
@@ -66,8 +67,8 @@ The software processes transactions provided from a .csv list and reports inform
 |--------------------|--------|-------------------------------------------------------------------|
 | Account Name       | Text   | The name of the account                                           |
 | Card Number        | Number | The card number used for the transaction, 1:M with account names  |
-| Datatypes.Transaction Amount | Number | The amount of the transaction, can be positive or negative        |
-| Datatypes.Transaction Type   | Text   | The type of transaction, values can be Credit, Debit, or Transfer |
+| Transaction Amount | Number | The amount of the transaction, can be positive or negative        |
+| Transaction Type   | Text   | The type of transaction, values can be Credit, Debit, or Transfer |
 | Description        | Text   | A brief description of the transaction                            |
 | Target Card Number | Number | (optional) only provided if the transaction type is a transfer    |
 

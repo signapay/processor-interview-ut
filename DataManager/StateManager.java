@@ -1,5 +1,7 @@
 package DataManager;
 
+import Datatypes.Account;
+import Datatypes.Card;
 import Datatypes.Transaction;
 import GUI.ScrollableTable;
 
@@ -8,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Class for managing state of program and gui window
@@ -59,7 +60,7 @@ public class StateManager implements ActionListener {
      * Register file opening button
      * @param button button to register
      */
-    public void registerOpenButton(JButton button) { openButton = button; }
+    public void registerOpenButton(JButton button) { openButton = button; button.setEnabled(hasFile());}
     private JButton openButton = null;
 
     /**
@@ -73,6 +74,26 @@ public class StateManager implements ActionListener {
         }
     }
     private JButton clearButton = null;
+
+    public void registerTableTransactionButton(JButton button) {
+        tabletransactionButton = button;
+    }
+    private JButton tabletransactionButton = null;
+
+    public void registerTableFailuresButton(JButton button) {
+        tableFailuresButton = button;
+    }
+    private JButton tableFailuresButton = null;
+
+    public void registerTableAccountButton(JButton button) {
+        tableAccountButton = button;
+    }
+    private JButton tableAccountButton = null;
+
+    public void registerTableAuditButton(JButton button) {
+        tableAuditButton = button;
+    }
+    private JButton tableAuditButton = null;
 
     // button functionality ------------------------------
     private File selectedFile = null;
@@ -162,33 +183,83 @@ public class StateManager implements ActionListener {
                 setMessage("Records cleared.");
             }
         }
+
+        // table transaction button
+        if (e.getActionCommand().equals("table_transaction")){
+            resetTableRecord();
+        }
+
+        // table account button
+        if (e.getActionCommand().equals("table_account")){
+            ArrayList<String[]> accounts = new ArrayList<>();
+            // for each account, parse into text grid
+            for (Account account: db.getAllAccounts()){
+                String name = account.getName();
+                for(Card card: account.getCardSetCopy()){
+                    accounts.add(new String[]{name, Long.toString(card.cardNumber()), card.getBalance().toString()});
+                    if (!name.equals("")) name = "";    // revoke name after first
+                }
+            }
+
+            // call table update
+            updateTableRecord(accounts, accountNames);
+        }
+
+        // table fail button
+        if (e.getActionCommand().equals("table_failures")){
+            ArrayList<String[]> records = new ArrayList<>();
+            for (String string: db.getFailedTransactionList()){records.add(new String[]{string});}
+            updateTableRecord(records, failedTransactionNames);
+        }
+
+        // table audit button
+        if (e.getActionCommand().equals("table_audit")){
+            ArrayList<String[]> records = new ArrayList<>();
+            for (Card card: db.getBadCards()){
+                records.add(new String[]{card.getName(), Long.toString(card.cardNumber()), card.getBalance().toString()});
+            }
+            updateTableRecord(records, auditFailNames);
+        }
     }
 
 
     // table functionality ------------------------------
 
-    // Default title set
-    ArrayList<String> defaultColumnNames = new ArrayList<>(Arrays.asList(
-            "Account Name", "Card Number", "Amount", "Type", "Description", "Target Card"));
+    // Default title sets
+    String[] defaultColumnNames = {"Account Name", "Card Number", "Amount", "Type", "Description", "Target Card"};
+    String[] accountNames = {"Account Holder", "Card Number", "Card Balance"};
+    String[] auditFailNames = {"Account Name", "Card number", "Card Balance"};
+    String[] failedTransactionNames = {"Failed Transactions"};
 
     /**
      * Update table records from database
      */
     private void resetTableRecord(){
-        updateTableRecord(db.records);
+        ArrayList<String[]> records = new ArrayList<>();
+        for (Transaction transaction : db.records){
+            if (transaction.getTransactionType().equals("Transfer")){
+                records.add(new String[]{transaction.getAccountName(), Long.toString(transaction.getCardNumber()),
+                        transaction.getTransactionAmount().toString(), transaction.getTransactionType(),
+                        transaction.getDescription(), Long.toString(transaction.getTargetCardNumber())});
+            }
+            else{
+                records.add(new String[]{transaction.getAccountName(), Long.toString(transaction.getCardNumber()),
+                        transaction.getTransactionAmount().toString(), transaction.getTransactionType(),
+                        transaction.getDescription(), "N/A"});
+            }
+        }
+        updateTableRecord(records, defaultColumnNames);
     }
 
-    /**
-     * Update table records to specified array list
-     * @param list list of transaction elements to enter as data
-     */
-    private void updateTableRecord(ArrayList<Transaction> list){
+    private void updateTableRecord(ArrayList<String[]> list, String[] names){
         if (scrollableTable != null){
-            scrollableTable.updateData(list, defaultColumnNames);
+            scrollableTable.updateData(list, names);
             //gui.revalidate();
             gui.repaint();
         }
     }
+
+
 
     /**
      * Register scroll table object for data control purposes
@@ -201,4 +272,6 @@ public class StateManager implements ActionListener {
         }
     }
     ScrollableTable scrollableTable = null;
+
+    // generate table buttons
 }

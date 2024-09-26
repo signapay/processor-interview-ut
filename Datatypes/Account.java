@@ -9,6 +9,7 @@ import java.util.Iterator;
 public class Account implements Comparable<Account>{
     private ArrayList<Card> cards = new ArrayList<>();
     private String name = "";
+    public String getName(){return name;}
 
     /**
      * Constructor
@@ -59,7 +60,11 @@ public class Account implements Comparable<Account>{
      * Get iterator over card list
      * @return Card iterator
      */
-    public Iterator<Card> getCardIterable(){
-        return cards.listIterator();
+    public ArrayList<Card> getCardSetCopy(){
+        return (new ArrayList<>(cards));
+    }
+
+    public Card getCard(long cardNumber) {
+        return getCard(new Card(name.toLowerCase(), cardNumber,  Money.make(0)));
     }
 }

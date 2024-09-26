@@ -11,10 +11,10 @@ import java.util.ArrayList;
  */
 public class DisplayTableModel extends AbstractTableModel {
     // record set
-    private ArrayList<Transaction> records = new ArrayList<>();
+    private ArrayList<String[]> records = new ArrayList<>();
 
     // name set
-    private ArrayList<String> titles = new ArrayList<>();
+    private String[] titles = new String[]{};
 
     /**
      * Constructor
@@ -26,7 +26,7 @@ public class DisplayTableModel extends AbstractTableModel {
      * @param records records to display
      * @param titles titles to display
      */
-    public void setRecords(ArrayList<Transaction> records, ArrayList<String> titles){
+    public void setRecords(ArrayList<String[]> records, String[] titles){
         this.records = records;
         this.titles = titles;
         this.fireTableDataChanged();
@@ -47,7 +47,7 @@ public class DisplayTableModel extends AbstractTableModel {
      */
     @Override
     public int getColumnCount() {
-       return Math.max(1,titles.size());
+       return Math.max(1,titles.length);
     }
 
     /**
@@ -58,8 +58,8 @@ public class DisplayTableModel extends AbstractTableModel {
     @Override
     public String getColumnName(int columnIndex) {
         //return "title";
-        if (titles.size() == 0) return "[nothing to display]";
-        return titles.get(columnIndex);
+        if (titles.length == 0) return "[nothing to display]";
+        return titles[columnIndex];
     }
 
     /**
@@ -80,16 +80,7 @@ public class DisplayTableModel extends AbstractTableModel {
      */
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Transaction transaction = records.get(rowIndex);    // get row
-        switch (columnIndex){
-            case 0: return transaction.getAccountName();
-            case 1: return transaction.getCardNumber();
-            case 2: return transaction.getTransactionAmount();
-            case 3: return transaction.getTransactionType();
-            case 4: return transaction.getDescription();
-            case 5: return transaction.getTargetCardNumber();
-        }
-        return null;
+        return records.get(rowIndex)[columnIndex];
     }
 
     @Override

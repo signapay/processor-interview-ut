@@ -39,10 +39,25 @@ public class GUI {
 
             // top pane
             JPanel top = new JPanel();
-            top.add(Buttons.generateFileButton(state));
+
+            JPanel topUpper = new JPanel();
+            JPanel topMiddle = new JPanel();
+            JPanel topLower = new JPanel();
+            top.add(topUpper);
+            top.add(topMiddle);
+            top.add(topLower);
+
+            topUpper.add(Buttons.generateFileButton(state));
             //top.add(Buttons.generateOpenButton(state));
-            top.add(Buttons.generateClearRecordButton(state));
-            top.add(Buttons.generateButtonLabel(state));
+            topUpper.add(Buttons.generateClearRecordButton(state));
+
+            topMiddle.add(Buttons.generateButtonLabel(state));
+
+            topLower.add(Buttons.generateTableTransactionButton(state));
+            topLower.add(Buttons.generateTableAccountButton(state));
+            topLower.add(Buttons.generateTableBadCardButton(state));
+            topLower.add(Buttons.generateTableFailedTransactionButton(state));
+
 
             // bottom pane
             ScrollableTable table = ScrollableTable.make(state);

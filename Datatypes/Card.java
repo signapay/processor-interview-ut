@@ -4,6 +4,7 @@ package Datatypes;
  * Datatype Object for Card
  */
 public class Card implements Comparable<Card>{
+    public String getName(){return name;}
     private String name;    // used for enforcing uniqueness
 
     /**
