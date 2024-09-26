@@ -92,7 +92,6 @@ public class DataManager extends Database<Transaction>{
             Log.log("Error: card number associated with " + transaction.getAccountName() +
                     " already registered with " + cardSet.get(transaction.getCardNumber()) +
                     "; transaction" + transaction);
-            failedTransactionLogic.records.add(transaction);
             return false;
         }
     }
@@ -116,7 +115,6 @@ public class DataManager extends Database<Transaction>{
                 Log.log("Error: card number associated with " + transaction.getAccountName() +
                         " already registered with " + cardSet.get(transaction.getCardNumber()) +
                         "; transaction" + transaction);
-                failedTransactionLogic.records.add(transaction);
             }
         }
         // case Credit or Debit
@@ -127,7 +125,6 @@ public class DataManager extends Database<Transaction>{
             return true;
         }
         Log.log("Error: unknown transaction type; transaction " + transaction);
-        failedTransactionLogic.records.add(transaction);
         return false;
     }
 
@@ -146,7 +143,7 @@ public class DataManager extends Database<Transaction>{
             // case card exists
             if (cardSet.containsKey(cardNumber)) {
                 // if card name matches the name on record
-                if (name.toLowerCase().equals(cardSet.get(cardNumber).toLowerCase())){
+                if (name.equalsIgnoreCase(cardSet.get(cardNumber))){
                     return true;
                 }
                 return false;
@@ -236,6 +233,7 @@ public class DataManager extends Database<Transaction>{
         cardSet.clear();
         accountSet.clear();
         failedTransactionLogic.clearRecords();
+        removeFile(persistenceFile);
         return true;
     }
 }

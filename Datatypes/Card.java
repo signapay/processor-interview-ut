@@ -53,4 +53,9 @@ public class Card implements Comparable<Card>{
         if (o == null) return Long.compare(this.cardNumber, o.cardNumber);
         return 1;
     }
+
+    @Override
+    public String toString(){
+        return name + "," + cardNumber + "," + balance;
+    }
 }

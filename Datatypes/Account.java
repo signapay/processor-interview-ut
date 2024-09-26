@@ -37,9 +37,10 @@ public class Account implements Comparable<Account>{
      * @return
      */
     public Card getCard(Card queryCard){
-        int index = cards.indexOf(queryCard);
-        if (index == -1) return null;
-        return cards.get(index);
+        for (Card card : cards){
+            if (card.compareTo(queryCard) == 0) return card;
+        }
+        return null;
     }
 
     /**
@@ -63,8 +64,12 @@ public class Account implements Comparable<Account>{
     public ArrayList<Card> getCardSetCopy(){
         return (new ArrayList<>(cards));
     }
-
-    public Card getCard(long cardNumber) {
-        return getCard(new Card(name.toLowerCase(), cardNumber,  Money.make(0)));
+    @Override
+    public String toString(){
+        StringBuilder build = new StringBuilder();
+        for(Card card:cards){
+            build.append(name).append(",").append(card.cardNumber()).append(',').append(card.getBalance()).append('\n');
+        }
+        return build.toString();
     }
 }
