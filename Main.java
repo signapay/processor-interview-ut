@@ -8,11 +8,10 @@ public class Main {
      * Calling function for program
      * @param args n/a
      */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
 
         // internal state
         DataManager dm = new DataManager();
-        //Database db = new Database(true);
 
         // load gui
         GUI gui = new GUI();

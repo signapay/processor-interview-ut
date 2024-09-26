@@ -57,8 +57,9 @@ public class DisplayTableModel extends AbstractTableModel {
      */
     @Override
     public String getColumnName(int columnIndex) {
-        return "title";
-        //titles.get(columnIndex);
+        //return "title";
+        if (titles.size() == 0) return "[nothing to display]";
+        return titles.get(columnIndex);
     }
 
     /**
