@@ -1,4 +1,4 @@
-# Datatypes.Transaction Processor
+# Transaction Processor
 
 Interview project for signapay
 
