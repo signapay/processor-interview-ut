@@ -17,11 +17,11 @@ Ensure you have the following installed:
 
 2. Install all the dependencies:
 
-npm install
+-> npm install
 
 3. To start the backend server using Nodemon, run:
 
-nodemon server.js
+-> nodemon server.js
 
 The server will start on http://localhost:9000.
 
@@ -29,7 +29,7 @@ The server will start on http://localhost:9000.
 
 Here are some key endpoints exposed by the backend:
 
-- `POST /api/upload` - Upload a single transaction file.
+- `POST /api/upload` - Upload transaction file and process it.
 - `GET /api/reports` - Retrieve system reports related to transactions and accounts.
 - `POST /api/reset` - Reset the system, clearing all stored transactions and account data.
 
