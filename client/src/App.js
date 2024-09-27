@@ -37,7 +37,7 @@ function App() {
         formData.append('file', file);
 
         try {
-            await axios.post('https://signapay-backend.onrender.com/api/transactions/upload', formData, {
+            await axios.post('http://localhost:9000/api/transactions/upload', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
             alert('File uploaded successfully.');
@@ -49,7 +49,7 @@ function App() {
 
     const getAccountBalances = async () => {
         try {
-            const res = await axios.get('https://signapay-backend.onrender.com/api/transactions/reports');
+            const res = await axios.get('http://localhost:9000/api/transactions/reports');
             setAccountBalances(res.data.accountBalances);
             setCollections(null);
             setBadTransactions(null);
@@ -61,7 +61,7 @@ function App() {
 
     const getCollections = async () => {
         try {
-            const res = await axios.get('https://signapay-backend.onrender.com/api/transactions/reports');
+            const res = await axios.get('http://localhost:9000/api/transactions/reports');
             setCollections(res.data.collections);
             setAccountBalances(null);
             setBadTransactions(null);
@@ -73,7 +73,7 @@ function App() {
 
     const getBadTransactions = async () => {
         try {
-            const res = await axios.get('https://signapay-backend.onrender.com/api/transactions/reports');
+            const res = await axios.get('http://localhost:9000/api/transactions/reports');
             setBadTransactions(res.data.badTransactions);
             setAccountBalances(null);
             setCollections(null);
@@ -85,7 +85,7 @@ function App() {
 
     const resetSystem = async () => {
         try {
-            await axios.post('https://signapay-backend.onrender.com/api/transactions/reset');
+            await axios.post('http://localhost:9000/api/transactions/reset');
             alert('System reset successfully.');
             setAccountBalances(null);
             setCollections(null);
