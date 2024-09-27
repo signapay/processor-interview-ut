@@ -53,7 +53,8 @@ The software processes transactions provided from a .csv list and reports inform
   - name, card number, balance
   - specifically accounts with poor standing
 - Failed transaction parses (strings)
-  - It was assumed that transaction target card to match a known account
+  - ~~It was assumed that transaction target card to match a known account~~
+  - It can be assumed that a transaction target card must match a known account, and that a transaction event affects both cards. This is no longer the default behavior.
   
 ### Error Logging
 

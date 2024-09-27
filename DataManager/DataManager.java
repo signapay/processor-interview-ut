@@ -101,14 +101,19 @@ public class DataManager extends Database<Transaction>{
         if (validateCard(transaction.getCardNumber(), transaction.getAccountName())){
             // call transaction processing
             Account account = accountSet.get(transaction.getAccountName().toLowerCase());
-            return accountProcessing(account, transaction);
+            //return accountProcessing(account, transaction);
+
+            // add card amount
+            account.addCard(new Card(transaction.getAccountName(),
+                    transaction.getCardNumber(), transaction.getTransactionAmount()));
+            return true;
         }
         // if invalid, report error
         else{
             // else, illegal card number
             Log.log("Error: card number associated with " + transaction.getAccountName() +
                     " already registered with " + cardSet.get(transaction.getCardNumber()) +
-                    "; transaction" + transaction);
+                    "; transaction " + transaction);
             return false;
         }
     }
