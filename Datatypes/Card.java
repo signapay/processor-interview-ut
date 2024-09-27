@@ -4,8 +4,12 @@ package Datatypes;
  * Datatype Object for Card
  */
 public class Card implements Comparable<Card>{
+    /**
+     * Accessor for card name
+     * @return name of cardholder
+     */
     public String getName(){return name;}
-    private String name;    // used for enforcing uniqueness
+    private final String name;    // used for enforcing uniqueness
 
     /**
      * Accessor for balance
@@ -19,7 +23,7 @@ public class Card implements Comparable<Card>{
      * @return card number
      */
     public long cardNumber(){return cardNumber;}
-    private long cardNumber;
+    private final long cardNumber;
 
     /**
      * Constructor [WARNING: does not do type checking]
@@ -50,7 +54,7 @@ public class Card implements Comparable<Card>{
      */
     @Override
     public int compareTo(Card o) {
-        if (o == null) return Long.compare(this.cardNumber, o.cardNumber);
+        if (o != null) return Long.compare(this.cardNumber, o.cardNumber);
         return 1;
     }
 

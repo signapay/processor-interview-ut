@@ -75,6 +75,33 @@ The software processes transactions provided from a .csv list and reports inform
 
 ### Class List
 
+- ```Main```
+- ```GUI```
+
+#### Datatypes
+
+- ```Account``` 
+- ```Card``` Partially immutable data class for representing cards. Permits changing balance
+- ```Money``` Immutable data class for representing an amount of money losslessly
+- ```toCSV``` Interface for generating a string for CSV that is different from toString method
+- ```Transaction``` Immutable data class for representing a Transaction
+
+#### DataManager
+
+- ```Database```
+- ```DataManager```
+- ```StateManager``` 
+
+#### GUI
+
+- ```Buttons``` Static factory functions for buttons used in main GUI
+- ```DisplayTableModel``` Table Model used to serve content of ScrollableTable
+- ```ScrollableTable``` JScrollPane object used to control display table
+
+#### Log
+
+- ```Log``` Intermediary class for logging to file with a specified logging function
+- ```LogToFile``` Class to log text to a specified file
 
 
 ## Interview
@@ -86,16 +113,3 @@ The software processes transactions provided from a .csv list and reports inform
 ### Expansion of Functionality
 
 The presented solution is a toy solution. It has been implemented to be modular so adding functionality can be done with minimal refactor cost. A proper implementation of this would rely much more heavily on more neutral types, such as Interfaces, that permit polymorphic behavior of datatypes and objects. Given the toy nature of this example, such extensive measures were deemed unnecessary.
-
-
-
-## TODO
-- table views
-  - failed transactions
-  - accounts
-  - negative accounts
-- account processing
-- write failed transactions to file / create persistence
-- remove open button
-- buttons to toggle table views
-- write class list documentation

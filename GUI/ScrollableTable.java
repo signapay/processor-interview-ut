@@ -1,7 +1,6 @@
 package GUI;
 
 import DataManager.StateManager;
-import Datatypes.Transaction;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
@@ -51,7 +50,8 @@ public class ScrollableTable extends JScrollPane {
 
     /**
      * Set data in table to new arrayList of data
-     * @param list ArrayList of data to be used in table
+     * @param list array list of table rows, given as arrays of strings
+     * @param names array of titles to associate with rows
      */
     public void updateData(ArrayList<String[]> list, String[] names){
         if (list == null) return;// reject null values
@@ -62,7 +62,7 @@ public class ScrollableTable extends JScrollPane {
     }
 
     /**
-     * Mark table for rerendering when redrawn
+     * Mark table for re-rendering when redrawn
      */
     public void updateGui(){
         table.tableChanged(new TableModelEvent(tableModel, TableModelEvent.HEADER_ROW));

@@ -71,6 +71,11 @@ public class Buttons{
         return label;
     }
 
+    /**
+     * Generate button for selecting transactions table
+     * @param state state, or null if no state desired
+     * @return button for table view selection
+     */
     public static JButton generateTableTransactionButton(StateManager state){
         JButton button = generateButton("Transactions",
                 "table_transaction",
@@ -84,6 +89,11 @@ public class Buttons{
         return button;
     }
 
+    /**
+     * Generate button for selecting failed transactions table
+     * @param state state, or null if no state desired
+     * @return button for table view selection
+     */
     public static JButton generateTableFailedTransactionButton(StateManager state){
         JButton button = generateButton("Failed Transactions",
                 "table_failures",
@@ -97,6 +107,11 @@ public class Buttons{
         return button;
     }
 
+    /**
+     * Generate button for selecting accounts table
+     * @param state state, or null if no state desired
+     * @return button for table view selection
+     */
     public static JButton generateTableAccountButton(StateManager state){
         JButton button = generateButton("Accounts",
                 "table_account",
@@ -110,6 +125,11 @@ public class Buttons{
         return button;
     }
 
+    /**
+     * Generate button for selecting failed audit cards table
+     * @param state state, or null if no state desired
+     * @return button for table view selection
+     */
     public static JButton generateTableBadCardButton(StateManager state){
         JButton button = generateButton("Accounts Failing Audit",
                 "table_audit",
@@ -123,6 +143,13 @@ public class Buttons{
         return button;
     }
 
+    /**
+     * Generate button with parameter settings
+     * @param text String to display in button
+     * @param actionCommand String to serve as action command when action event occurs
+     * @param tooltip String to display as tooltip
+     * @return new button object
+     */
     public static JButton generateButton(String text, String actionCommand, String tooltip){
         JButton button = new JButton(text);
         button.setActionCommand(actionCommand);

@@ -35,7 +35,9 @@ public class Money implements Comparable<Money>{
      * @param element integer value to test
      * @return false if negative, true if positive
      */
-    public static boolean evaluateSign(int element){if (element < 0) return false; else return true;}
+    public static boolean evaluateSign(int element){
+        return element >= 0;
+    }
 
     // Constructors --------------------
 

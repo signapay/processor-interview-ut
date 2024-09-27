@@ -1,15 +1,20 @@
 package Datatypes;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Datatype for Account
  */
 public class Account implements Comparable<Account>{
     private ArrayList<Card> cards = new ArrayList<>();
-    private String name = "";
+
+    /**
+     * Accessor for account owner name
+     * @return owner name
+     */
     public String getName(){return name;}
+    private String name = "";
+
 
     /**
      * Constructor

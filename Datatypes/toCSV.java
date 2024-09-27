@@ -1,5 +1,12 @@
 package Datatypes;
 
+/**
+ * Interface for printing to csv
+ */
 public interface toCSV {
-    public String toCsv();
+    /**
+     * Generate csv-format string
+     * @return String in desired CSV format
+     */
+    String toCsv();
 }

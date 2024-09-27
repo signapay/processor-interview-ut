@@ -1,7 +1,5 @@
 package GUI;
 
-import Datatypes.Transaction;
-
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
@@ -23,8 +21,8 @@ public class DisplayTableModel extends AbstractTableModel {
 
     /**
      * Update table contents to reflect new content
-     * @param records records to display
-     * @param titles titles to display
+     * @param records arraylist of rows given as arrays of strings
+     * @param titles array of titles to associate with rows
      */
     public void setRecords(ArrayList<String[]> records, String[] titles){
         this.records = records;
