@@ -17,10 +17,10 @@ Make sure you have the following installed on your machine:
 
 2. Install the dependencies:
 
-npm install
+-> npm install
 
 3. To start the local server, run:
 
-npm start
+-> npm start
 
 This will run the app in development mode and open http://localhost:3000 in your browser.
