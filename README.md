@@ -53,7 +53,7 @@ The software processes transactions provided from a .csv list and reports inform
   - specifically accounts with poor standing
 - Failed transaction parses (strings)
   - It was assumed that transaction target card to match a known account
-  - 
+  
 ### Error Logging
 
 - Errors are logged to ```log.txt``` and include failed type conversions, failed file reads, and logging of deletion operations
@@ -75,12 +75,12 @@ The software processes transactions provided from a .csv list and reports inform
 
 ### Class List
 
-- ```Main```
-- ```GUI```
+- ```Main``` 
+- ```GUI``` 
 
 #### Datatypes
 
-- ```Account``` 
+- ```Account``` Partially immutable data class for representing account. Allows indirect interaction with cards associated with account
 - ```Card``` Partially immutable data class for representing cards. Permits changing balance
 - ```Money``` Immutable data class for representing an amount of money losslessly
 - ```toCSV``` Interface for generating a string for CSV that is different from toString method
@@ -88,9 +88,9 @@ The software processes transactions provided from a .csv list and reports inform
 
 #### DataManager
 
-- ```Database```
-- ```DataManager```
-- ```StateManager``` 
+- ```Database``` Template object to manage an ArrayList of a specified type with file alteration functions.
+- ```DataManager``` Subclass of Database<Transaction> used to manage the file I/O for the program. Contains instances of Database for other types; serves as internal record memory
+- ```StateManager``` Class that communicates between frontend and DataManager, controlling the state of the program
 
 #### GUI
 

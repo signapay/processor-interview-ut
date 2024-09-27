@@ -76,9 +76,9 @@ public class StateManager implements ActionListener {
     private JButton clearButton = null;
 
     public void registerTableTransactionButton(JButton button) {
-        tabletransactionButton = button;
+        tableTransactionButton = button;
     }
-    private JButton tabletransactionButton = null;
+    private JButton tableTransactionButton = null;
 
     public void registerTableFailuresButton(JButton button) {
         tableFailuresButton = button;
@@ -236,7 +236,7 @@ public class StateManager implements ActionListener {
      */
     private void resetTableRecord(){
         ArrayList<String[]> records = new ArrayList<>();
-        for (Transaction transaction : db.records){
+        for (Transaction transaction : db.getTransactionList()){
             if (transaction.getTransactionType().equals("Transfer")){
                 records.add(new String[]{transaction.getAccountName(), Long.toString(transaction.getCardNumber()),
                         transaction.getTransactionAmount().toString(), transaction.getTransactionType(),

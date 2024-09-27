@@ -15,11 +15,17 @@ public class DataManager extends Database<Transaction>{
     public static final File badAccountPersistenceFile = new File("failed_audit.csv");
 
 
-    private Database<String> failedTransactionParses = new Database<String>(failedTransactionReporting);
-    private Database<Card> badAccounts = new Database<Card>(badAccountPersistenceFile);
-    private TreeMap<Long, String> cardSet = new TreeMap<Long, String>();
-    private TreeMap<String, Account> accountSet = new TreeMap<String, Account>();
-    private Database<Transaction> failedTransactionLogic = new Database<Transaction>(failedTransactionParseReporting);
+    private final Database<String> failedTransactionParses = new Database<String>(failedTransactionReporting);
+    private final Database<Card> badAccounts = new Database<Card>(badAccountPersistenceFile);
+    /**
+     * Maps card number to account name (unformatted string)
+     */
+    private final TreeMap<Long, String> cardSet = new TreeMap<>();
+    /**
+     * Maps account name (lowercase) to account associated
+     */
+    private final TreeMap<String, Account> accountSet = new TreeMap<>();
+    private final Database<Transaction> failedTransactionLogic = new Database<Transaction>(failedTransactionParseReporting);
 
     /**
      * Constructor for database
@@ -28,6 +34,7 @@ public class DataManager extends Database<Transaction>{
         super(transactionPersistenceFile);
     }
 
+    // ----------------- read from file -----------------------
     /**
      * Add records from file
      * @param file File to read from
@@ -49,11 +56,13 @@ public class DataManager extends Database<Transaction>{
                     }
                     else{
                         failedTransactionLogic.records.add(transaction);
+                        // error already logged by addTransactionEvent
                     }
                 }
                 else{
                     // add failed transactions to list
                     failedTransactionParses.records.add(nextLine);
+                    // error already logged by parsing
                 }
             }
 
@@ -62,11 +71,13 @@ public class DataManager extends Database<Transaction>{
 
             // validate and record failed accounts
             auditAccounts();
-            badAccounts.save();
 
             // rewrite failed transactions
             failedTransactionParses.save();
             failedTransactionLogic.save();
+
+            // save transaction records
+            save();
 
             return true;
         } catch (FileNotFoundException e) {
@@ -79,9 +90,15 @@ public class DataManager extends Database<Transaction>{
         }
     }
 
+
+    /**
+     * High-level processing of adding a transaction to the database, or finding it is invalid
+     * @param transaction transaction to attempt to integrate
+     * @return boolean indicating success
+     */
     private boolean addTransactionEvent(Transaction transaction){
         // check card validity
-        if (validateCard(transaction.getCardNumber(), transaction.getAccountName().toLowerCase())){
+        if (validateCard(transaction.getCardNumber(), transaction.getAccountName())){
             // call transaction processing
             Account account = accountSet.get(transaction.getAccountName().toLowerCase());
             return accountProcessing(account, transaction);
@@ -96,31 +113,39 @@ public class DataManager extends Database<Transaction>{
         }
     }
 
+    /**
+     * Aggregate card to account if transaction type is valid, or report error if not
+     * @param account Account object to add transaction to
+     * @param transaction Transaction to evaluate
+     * @return true if succeeded, or false if transaction fails
+     */
     private boolean accountProcessing(Account account, Transaction transaction){
-        // case Transfer
+        // case Transfer: requires additional processing to validate other card
         if(transaction.getTransactionType().equals("Transfer")){
             // find target account
             if (cardSet.containsKey(transaction.getTargetCardNumber())){
                 // get target account
                 Account targetAccount = accountSet.get(cardSet.get(transaction.getTargetCardNumber()).toLowerCase());
-                // add to accounts
-                account.addCard(new Card(transaction.getAccountName().toLowerCase(),
+                // add transfer to primary account
+                account.addCard(new Card(transaction.getAccountName(),
                         transaction.getCardNumber(), transaction.getTransactionAmount()));
-                targetAccount.addCard(new Card(targetAccount.getName().toLowerCase(),
+                // remove transfer from secondary account
+                targetAccount.addCard(new Card(targetAccount.getName(),
                         transaction.getTargetCardNumber(),
                         Money.make(-1 * transaction.getTransactionAmount().getTotalCents())));
                 return true;
             }
             else{
-                Log.log("Error: card number associated with " + transaction.getAccountName() +
+                Log.log("Error: card number " + transaction.getTargetCardNumber() + "associated with " + transaction.getAccountName() +
                         " already registered with " + cardSet.get(transaction.getCardNumber()) +
                         "; transaction" + transaction);
             }
         }
         // case Credit or Debit
-        else if(transaction.getTransactionType().equals("Credit") || transaction.getTransactionType().equals("Debit")){
+        else if(transaction.getTransactionType().equalsIgnoreCase("Credit")
+                || transaction.getTransactionType().equalsIgnoreCase("Debit")){
             // add card amount
-            account.addCard(new Card(transaction.getAccountName().toLowerCase(),
+            account.addCard(new Card(transaction.getAccountName(),
                     transaction.getCardNumber(), transaction.getTransactionAmount()));
             return true;
         }
@@ -128,14 +153,18 @@ public class DataManager extends Database<Transaction>{
         return false;
     }
 
+    /**
+     * Evaluate card for presence of dopplegangers with different information; if card does not exist, instantiates.
+     * Also source of account instantiation.
+     * @param cardNumber number to search for
+     * @param name name associated with card
+     * @return boolean for whether card is valid or not
+     */
     private boolean validateCard(long cardNumber, String name){
         // if null string, evaluate for existence
         if (name == null){
             // if card is known, return true. Else return false.
-            if (cardSet.containsKey(cardNumber)){
-                return true;
-            }
-            return false;
+            return cardSet.containsKey(cardNumber);
         }
 
         // if not null string, evaluate for account holder
@@ -143,10 +172,7 @@ public class DataManager extends Database<Transaction>{
             // case card exists
             if (cardSet.containsKey(cardNumber)) {
                 // if card name matches the name on record
-                if (name.equalsIgnoreCase(cardSet.get(cardNumber))){
-                    return true;
-                }
-                return false;
+                return name.equalsIgnoreCase(cardSet.get(cardNumber));
             }
             // case card does not exist
             else{
@@ -154,7 +180,7 @@ public class DataManager extends Database<Transaction>{
                 // if account does not exist, add account
                 if (!accountSet.containsKey(name.toLowerCase())){
                     //create account and register card
-                    cardSet.put(cardNumber, name.toLowerCase());    // add to card set
+                    cardSet.put(cardNumber, name);    // add to card set
                     account = new Account(name);            // add account
                     accountSet.put(name.toLowerCase(), account);
                 }
@@ -166,6 +192,9 @@ public class DataManager extends Database<Transaction>{
         }
     }
 
+    /**
+     * Reevaluates the logic failure transactions; does NOT write to persistent files
+     */
     private void revalidateFailedLogic(){
         ArrayList<Transaction> retry = new ArrayList<>(failedTransactionLogic.records);
         failedTransactionLogic.records.clear(); // reset data
@@ -183,8 +212,12 @@ public class DataManager extends Database<Transaction>{
         }
     }
 
+
+    /**
+     * Filter all validated cards and collect those with negative balances; writes result to file
+     */
     private void auditAccounts(){
-        badAccounts.records.clear();
+        badAccounts.records.clear();    // clear bad account records
 
         // for each account
         for(Map.Entry<String, Account> accountSet : accountSet.entrySet()) {
@@ -198,33 +231,15 @@ public class DataManager extends Database<Transaction>{
                 }
             }
         }
+        // save
+        badAccounts.save();
     }
 
-    // transaction list
-    public ArrayList<Transaction> getTransactionList(){
-        return records;
-    }
-
-    // failed transaction list
-    public ArrayList<String> getFailedTransactionList(){
-        ArrayList<String> list = new ArrayList<String>(failedTransactionParses.records);
-        for (Transaction item : failedTransactionLogic.records){
-            list.add(item.toString());
-        }
-        return list;
-    }
-
-    // account list
-    public ArrayList<Account> getAllAccounts(){
-        return new ArrayList<>(accountSet.values());
-    }
-
-    // truant card list
-    public ArrayList<Card> getBadCards(){
-        return new ArrayList<>(badAccounts.records);
-    }
-
-    // ovverrides
+    // ------------------------- remove files ------------------------
+    /**
+     * Clear records of internal memory; overridden from super class to clear records of other contained databases
+     * @return true
+     */
     @Override
     public boolean clearRecords(){
         records.clear();
@@ -236,4 +251,45 @@ public class DataManager extends Database<Transaction>{
         removeFile(persistenceFile);
         return true;
     }
+
+    // data display retrieval ----------------------------------------------
+    /**
+     * Get copy of all valid transactions
+     * @return
+     */
+    public ArrayList<Transaction> getTransactionList(){
+        return new ArrayList<Transaction>(records);
+    }
+
+    /**
+     * Get copy of list of failed transactions; subdivided by failure type
+     * @return ArrayList of strings of failed transactions; includes title separators for subtype
+     */
+    public ArrayList<String> getFailedTransactionList(){
+        ArrayList<String> list = new ArrayList<String>();
+        list.add("Parse Errors:");
+        list.addAll(failedTransactionParses.records);
+        list.add("Transaction Logic Errors:");
+        for (Transaction item : failedTransactionLogic.records){
+            list.add(item.toString());
+        }
+        return list;
+    }
+
+    /**
+     * Get copy of knwon valid accounts
+     * @return ArrayList of accounts
+     */
+    public ArrayList<Account> getAllAccounts(){
+        return new ArrayList<>(accountSet.values());
+    }
+
+    /**
+     * Get copy of list of card accounts that failed audit
+     * @return ArrayList of Cards
+     */
+    public ArrayList<Card> getBadCards(){
+        return new ArrayList<>(badAccounts.records);
+    }
+
 }

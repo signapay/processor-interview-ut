@@ -7,6 +7,10 @@ import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+/**
+ * Template class for controlling an ArrayList record of a given datatype, with associated file manipulation functions
+ * @param <T>
+ */
 public class Database<T> {
     // internal memory
     public ArrayList<T> records = new ArrayList<>();
@@ -27,6 +31,12 @@ public class Database<T> {
     }
 
     // read from file ----------------
+
+    /**
+     * No-op function for reading from file; must be overwritten in subclass to see effect
+     * @param file file to read from
+     * @return boolean indicating success
+     */
     public boolean readFromFile(File file){return true;}
 
     // write to file -----------------
@@ -92,8 +102,6 @@ public class Database<T> {
         }
     }
 
-    // control data ------------------
-
     /**
      * delete file from filesystem
      * @param file File to remove
@@ -119,14 +127,13 @@ public class Database<T> {
         }
     }
 
+    // control data ------------------
+
     /**
      * Determine if the record state has any records
      * @return true if records, false if no records
      */
     public boolean hasRecords(){
-        if (records.isEmpty()) return false;
-        return true;
+        return !records.isEmpty();
     }
-
-
 }
