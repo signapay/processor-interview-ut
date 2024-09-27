@@ -1,150 +1,58 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
+import FileUpload from './components/FileUpload';
+import ResetButton from './components/ResetButton';
+import ReportTable from './components/ReportTable';
+import { API_ENDPOINTS } from './constants/api';
+import { ACCOUNT_TABLE_HEADERS, COLLECTIONS_TABLE_HEADERS, BAD_TRANSACTIONS_TABLE_HEADERS } from './constants/tableHeaders';
+import './App.css'; // Import CSS file for styles
 
 const App = () => {
   const [file, setFile] = useState(null);
   const [report, setReport] = useState(null);
-  const fileInputRef = useRef(null);
-
-
-  const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
-  };
-
-  const handleFileUpload = async () => {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-      const response = await axios.post('http://localhost:5000/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      alert(response.data.message);
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      alert(error);
-    }
-  };
-
-  const handleReset = async () => {
-    try {
-      const response = await axios.post('http://localhost:5000/reset');
-      alert(response.data.message);
-      setReport(null); // Clear report after reset
-      setFile(null);
-      if (fileInputRef.current) { 
-        fileInputRef.current.value = null;  // Clear file input
-      }
-    } catch (error) {
-      console.error('Error resetting system:', error);
-    }
-  };
+  const fileInputRef = useRef(null);  // Create the file input ref here
 
   const handleFetchReport = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/report');
+      const response = await axios.get(API_ENDPOINTS.fetchReport);
       setReport(response.data);
     } catch (error) {
       console.error('Error fetching report:', error);
     }
   };
 
-  const renderAccountsTable = () => {
-    return (
-      <table border="1">
-        <thead>
-          <tr>
-            <th>Account Name</th>
-            <th>Card Number</th>
-            <th>Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Object.entries(report.accounts).map(([accountName, accountData]) => (
-            Object.entries(accountData.cards).map(([cardNumber, cardData]) => (
-              <tr key={`${accountName}-${cardNumber}`}>
-                <td>{accountName}</td>
-                <td>{cardNumber}</td>
-                <td>{cardData.amount}</td>
-              </tr>
-            ))
-          ))}
-        </tbody>
-      </table>
-    );
-  };
-
-  const renderCollectionsTable = () => {
-    return (
-      <table border="1">
-        <thead>
-          <tr>
-            <th>Account Name</th>
-            <th>Card Number</th>
-            <th>Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          {report.collections.map((transaction, index) => (
-            <tr key={index}>
-              <td>{transaction['Account Name']}</td>
-              <td>{transaction['Card Number']}</td>
-              <td>{transaction['Amount']}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  };
-
-  const renderBadTransactionsTable = () => {
-    return (
-      <table border="1">
-        <thead>
-          <tr>
-            <th>Account Name</th>
-            <th>Card Number</th>
-            <th>Transaction Amount</th>
-            <th>Transaction Type</th>
-            <th>Description</th>
-            <th>Target Card Number</th>
-          </tr>
-        </thead>
-        <tbody>
-          {report.badTransactions.map((transaction, index) => (
-            <tr key={index}>
-              <td>{transaction['Account Name'] || 'N/A'}</td>
-              <td>{transaction['Card Number'] || 'N/A'}</td>
-              <td>{transaction['Transaction Amount'] || 'N/A'}</td>
-              <td>{transaction['Transaction Type'] || 'N/A'}</td>
-              <td>{transaction['Description'] || 'N/A'}</td>
-              <td>{transaction['Target Card Number'] || 'N/A'}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  };
-
   return (
-    <div>
+    <div className="container">
       <h1>Transaction Processor</h1>
       
-      <input type="file" onChange={handleFileChange} ref={fileInputRef}/>
-      <button onClick={handleFileUpload}>Upload File</button>
-      <button onClick={handleReset}>Reset System</button>
-      <button onClick={handleFetchReport}>Show Report</button>
+      <div className="button-group">
+        <div className="button-item">
+          <label>Upload a CSV file:</label>
+          <FileUpload setFile={setFile} fileInputRef={fileInputRef} />
+        </div>
+
+        <div className="button-item">
+          <label>Generate Report:</label>
+          <button className="btn-fetch-report" onClick={handleFetchReport}>Show Report</button>
+        </div>
+        
+        <div className="button-item">
+          <label>Reset the System:</label>
+          <ResetButton setReport={setReport} setFile={setFile} fileInputRef={fileInputRef} />
+        </div>
+      
+      </div>
 
       {report && (
         <div>
           <h2>Chart of Accounts</h2>
-          {renderAccountsTable()}
+          <ReportTable report={report} headers={ACCOUNT_TABLE_HEADERS} dataKey="accounts" />
 
           <h2>Accounts for Collections</h2>
-          {renderCollectionsTable()}
+          <ReportTable report={report} headers={COLLECTIONS_TABLE_HEADERS} dataKey="collections" />
 
           <h2>Bad Transactions</h2>
-          {renderBadTransactionsTable()}
+          <ReportTable report={report} headers={BAD_TRANSACTIONS_TABLE_HEADERS} dataKey="badTransactions" />
         </div>
       )}
     </div>
