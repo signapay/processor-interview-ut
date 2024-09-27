@@ -62,6 +62,7 @@ public class GUI {
             // bottom pane
             ScrollableTable table = ScrollableTable.make(state);
 
+            // split panel
             JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, top, table);
             pane.setOneTouchExpandable(true);
             pane.setDividerLocation(200);

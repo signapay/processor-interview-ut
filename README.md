@@ -1,6 +1,6 @@
 # Transaction Processor
 
-Interview project for signapay
+Interview project for SignaPay
 
 This project is a transaction processor program targeted at an internal account manager for viewing and processing transaction files provided as .csv files. This program is a toy example.
 
@@ -39,6 +39,7 @@ The software processes transactions provided from a .csv list and reports inform
   - also clears the working memory cache in ```.backup.csv```
 - Table for displaying working memory of files
 - Buttons to toggle between table views
+  - Views are valid transactions, accounts, cards failing audit, and failed transaction records
 - Button for optional persistence of views to files
 
 ### Table Views
@@ -57,7 +58,9 @@ The software processes transactions provided from a .csv list and reports inform
 ### Error Logging
 
 - Errors are logged to ```log.txt``` and include failed type conversions, failed file reads, and logging of deletion operations
-- Failed transaction parses are written to ```failed_transactions.csv```
+- Failed transaction parses are written to ```failed_transactions_parses.csv```
+- Failed transactions due to inconsistent logic are written to ```failed_transactions.csv```
+- Accounts that fail the audit are written to ```failed_audit.csv```
 
 ## Program Documentation
 
@@ -72,11 +75,10 @@ The software processes transactions provided from a .csv list and reports inform
 | Description        | Text   | A brief description of the transaction                            |
 | Target Card Number | Number | (optional) only provided if the transaction type is a transfer    |
 
-
 ### Class List
 
-- ```Main``` 
-- ```GUI``` 
+- ```Main``` Main class for launching program
+- ```GUI``` Generates window for program
 
 #### Datatypes
 
