@@ -114,6 +114,10 @@ public class StateManager implements ActionListener {
         setMessage("File selected:" + selectedFile.toString());
     }
 
+    /**
+     * Report if a file is selected
+     * @return boolean indicating selectino status
+     */
     public boolean hasFile(){
         if (selectedFile == null) return false;
         return selectedFile.isFile();
@@ -251,6 +255,11 @@ public class StateManager implements ActionListener {
         updateTableRecord(records, defaultColumnNames);
     }
 
+    /**
+     * Update table with new data and columns
+     * @param list Data to display
+     * @param names Columns associated with data
+     */
     private void updateTableRecord(ArrayList<String[]> list, String[] names){
         if (scrollableTable != null){
             scrollableTable.updateData(list, names);
@@ -258,8 +267,6 @@ public class StateManager implements ActionListener {
             gui.repaint();
         }
     }
-
-
 
     /**
      * Register scroll table object for data control purposes
@@ -272,6 +279,4 @@ public class StateManager implements ActionListener {
         }
     }
     ScrollableTable scrollableTable = null;
-
-    // generate table buttons
 }
