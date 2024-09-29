@@ -19,14 +19,19 @@ import javax.swing.*;
 public class GUI {
 
 	final static String BUTTONPANEL = "Enter Data";
-    final static String TEXTPANEL = "Display Reports";
+    final static String REPORTPANEL = "Display Reports";
 
-
+    /**
+     * Constructor and main method that creates and manages the GUI during run time.
+     * @param process MainProcessor object that is injected to let the GUI access its functions.
+     */
     public GUI(MainProcessor process) {
+    	// Frame that wraps the tabbed pane 
     	JFrame frame = new JFrame("Simple Transaction Processor");
     	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JTabbedPane tabbedPane = new JTabbedPane();
         
+        // Creates cards/tabs panels which are wrapped by the tabbed pane
         JPanel card1 = new JPanel();
         card1.setLayout(new GridBagLayout());
         card1.setPreferredSize(new Dimension(1100, 700));
@@ -34,9 +39,11 @@ public class GUI {
         JPanel card2 = new JPanel();
         card1.setLayout(new GridBagLayout());
         
+        // panel that is wrapped by the card1 panel for formatting
         JPanel card1DisplayLabel = new JPanel();
         card1DisplayLabel.setLayout(new BoxLayout(card1DisplayLabel, BoxLayout.PAGE_AXIS));
         
+        // Constraints variable for formatting the panels
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.NORTH;
         gbc.weighty = 1;
@@ -45,30 +52,26 @@ public class GUI {
         
         card1.add(card1DisplayLabel, gbc);
         
-        // Create label to ask the user to enter a csv file
+        // Create label to ask the user to enter a csv file and add to panel for formatting
         JLabel label = new JLabel("Please select a csv file name with transactions");
-        //label.setBounds(100, 20, 300, 25);
         label.setFont(new Font("Times New Roman", Font.PLAIN, 24));
         card1DisplayLabel.add(label);
       	
         JPanel card1DisplayButton = new JPanel();
         card1DisplayButton.setLayout(new BoxLayout(card1DisplayButton, BoxLayout.PAGE_AXIS));
         
+        // Create buttons for letting the user add CSV files and clear any held data
         JButton button1 = new JButton("Select File");
         JButton button2 = new JButton("Clear Data");
-        
+   
         button1.setFont(new Font("Times New Roman", Font.PLAIN, 16));
         button2.setFont(new Font("Times New Roman", Font.PLAIN, 16));
         
-//        button1.setPreferredSize(new Dimension(40, 40));
-//        button2.setPreferredSize(new Dimension(40, 40));
-
+        // Add buttons to the panel
         card1DisplayButton.add(button1);
         card1DisplayButton.add(button2);
 
-        //button.setAlignmentY(Component.BOTTOM_ALIGNMENT);
-        //button.setAlignmentX(Component.CENTER_ALIGNMENT);
-        //button.setBounds(80, 70, 100, 30);
+        // Change the grid Y and weight to format the buttons.
         gbc.gridy = 1;
         gbc.weighty = 30;
         card1.add(card1DisplayButton, gbc);
@@ -105,18 +108,21 @@ public class GUI {
 				gbc.anchor = GridBagConstraints.CENTER;
 				gbc.gridy = 1;
 				
-				
+				// Create a textarea for the first report
 				JTextArea chartArea = new JTextArea(40,30);
 				chartArea.setEditable(false);
 				chartArea.setLineWrap(true);
 				chartArea.setWrapStyleWord(true);
 				
+				// Add a scrollbar to the textarea
 				JScrollPane chartScroll = new JScrollPane(chartArea);
 				chartScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 				
+				// Get the report and format it for the textarea
 				String chartText = "";
 				HashMap<String, ArrayList<String>> chartMap = process.getChartedAccounts();
 				HashMap<String, ArrayList<String>> displayMap = new HashMap<>();
+				
 				for(String entry : chartMap.keySet()) {
 					chartText += "";
 				
@@ -140,6 +146,7 @@ public class GUI {
 					}
 				}
 				
+				// Add report to the text for the textarea
 				for(String entry : displayMap.keySet()) {
 					chartText += "Account Name: " + entry;
 					for(int i = 0; i < displayMap.get(entry).size(); i+=2){
@@ -148,16 +155,19 @@ public class GUI {
 					chartText += "\n\n";
 				}
 				chartArea.setText(chartText);
-				chartArea.setCaretPosition(0);
+				chartArea.setCaretPosition(0); // Resets textarea to the top of the scrollbar
 				
+				// Create textarea for the second report
 				JTextArea collectArea = new JTextArea(40,30);
 				collectArea.setEditable(false);
 				collectArea.setLineWrap(true);
 				collectArea.setWrapStyleWord(true);
 				
+				// Add scrollbar to the second report
 				JScrollPane collectScroll = new JScrollPane(collectArea);
 				collectScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 				
+				// Get second report and format it before adding to the textarea
 				String collectText = "";
 				HashMap<String, ArrayList<String>> collectMap = process.getAccountsForCollections();
 				for(String entry : collectMap.keySet()) {
@@ -165,23 +175,27 @@ public class GUI {
 							collectMap.get(entry).subList(1, collectMap.get(entry).size()) + " " + "\n\n";
 				}
 				collectArea.setText(collectText);
-				collectArea.setCaretPosition(0);
+				collectArea.setCaretPosition(0); // Resets textarea to the top of the scrollbar
 				
+				// Create textarea for the third report
 				JTextArea failedArea = new JTextArea(40,30);
 				failedArea.setEditable(false);
 				failedArea.setLineWrap(true);
 				failedArea.setWrapStyleWord(true);
 				
+				// Add scrollbar to the third report
 				JScrollPane failedScroll = new JScrollPane(failedArea);
 				failedScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
+				// Get third report and format it before adding to the textarea
 				String failedText = "";
 				for(List<String> fails : process.failedTransactions()) {
 					failedText += String.join(" ", fails) + "\n";
 				}
 				failedArea.setText(failedText);
-				failedArea.setCaretPosition(0);
+				failedArea.setCaretPosition(0);// Resets textarea to the top of the scrollbar
 				
+				// Remove all displayed panels before populating the tab again
 		        card2.removeAll();
 		        card2.add(chartScroll, gbc);
 		        card2.add(collectScroll, gbc);
@@ -191,6 +205,7 @@ public class GUI {
 			}
         });
         
+        // Listener function for deleting all stored data
         button2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -198,14 +213,15 @@ public class GUI {
 			}
         });
 
+        
+        // Add tabs (panels) to the tabbedpane before adding the tabbedpane to the frame and displaying
         tabbedPane.addTab(BUTTONPANEL, card1);
-        tabbedPane.addTab(TEXTPANEL, card2);
+        tabbedPane.addTab(REPORTPANEL, card2);
 
         frame.add(tabbedPane, BorderLayout.CENTER);
         frame.pack();
-        frame.setLocationRelativeTo(null);
+        frame.setLocationRelativeTo(null); // Sets the frame to the center of the screen
         frame.setVisible(true);
-
 
     }
     
