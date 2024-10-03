@@ -1,4 +1,4 @@
-public class Transactions {
+public class AccountInfo {
     private String accountName;
     private String cardNumber;
     private double transactionAmount;
@@ -6,7 +6,7 @@ public class Transactions {
     private String description;
     private String targetCardNumber;  // Only for transfers
 
-    public Transactions(String accountName, String cardNumber, double transactionAmount, String transactionType, String description, String targetCardNumber) {
+    public AccountInfo(String accountName, String cardNumber, double transactionAmount, String transactionType, String description, String targetCardNumber) {
         this.accountName = accountName;
         this.cardNumber = cardNumber;
         this.transactionAmount = transactionAmount;

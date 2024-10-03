@@ -28,7 +28,7 @@ public class App {
                         System.out.print("Enter Input File Name: ");
                         String fileName = scanner.nextLine(); // Ask user for file name
                         try {
-                            List<Transactions> transactions = reader.readFileIn(fileName);
+                            List<AccountInfo> transactions = reader.readFileIn(fileName);
                             manager.processTransactions(transactions);
                             if(reader.fileRead){
                                 System.out.println("File processed successfully!");

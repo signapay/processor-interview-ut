@@ -5,15 +5,15 @@ public class AccountManager {
     private List<BadTransaction> badTransactions = new ArrayList<>();
 
     class BadTransaction {
-        private Transactions transaction;
+        private AccountInfo transaction;
         private String reason;
     
-        public BadTransaction(Transactions transaction, String reason) {
+        public BadTransaction(AccountInfo transaction, String reason) {
             this.transaction = transaction;
             this.reason = reason;
         }
     
-        public Transactions getTransaction() {
+        public AccountInfo getTransaction() {
             return transaction;
         }
     
@@ -24,8 +24,8 @@ public class AccountManager {
     
 
     // Process a list of transactions
-    public void processTransactions(List<Transactions> transactions) {
-        for (Transactions t : transactions) {
+    public void processTransactions(List<AccountInfo> transactions) {
+        for (AccountInfo t : transactions) {
             try {
                 if (t.getTransactionType().equalsIgnoreCase("Credit") || t.getTransactionType().equalsIgnoreCase("Debit")) {
                     processCreditOrDebit(t);
@@ -44,7 +44,7 @@ public class AccountManager {
     
 
     // Process Credit or Debit transactions
-    private void processCreditOrDebit(Transactions t) {
+    private void processCreditOrDebit(AccountInfo t) {
         accounts.putIfAbsent(t.getAccountName(), new HashMap<>());
         Map<String, Double> cards = accounts.get(t.getAccountName());
     
@@ -71,7 +71,7 @@ public class AccountManager {
     
 
     // Process Transfer transactions
-    private void processTransfer(Transactions t) {
+    private void processTransfer(AccountInfo t) {
         if (t.getTransactionAmount() < 0 || t.getTargetCardNumber() == null) {
             badTransactions.add(new BadTransaction(t, "Negative amount or missing target card for transfer."));
             return;
@@ -134,7 +134,7 @@ public class AccountManager {
 
         System.out.println("\nBad Transactions:");
         for (BadTransaction bt : badTransactions) {
-        Transactions t = bt.getTransaction();
+        AccountInfo t = bt.getTransaction();
         System.out.println(t.getAccountName() + ", " + t.getCardNumber() + ", " + t.getDescription() + " - Reason: " + bt.getReason());
     }
 }

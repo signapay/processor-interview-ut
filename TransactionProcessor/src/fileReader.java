@@ -4,8 +4,8 @@ import java.io.*;
 public class fileReader {
     boolean fileRead = true;
     
-    public List<Transactions> readFileIn(String fileName) throws IOException{
-        List<Transactions> data = new ArrayList<>();
+    public List<AccountInfo> readFileIn(String fileName) throws IOException{
+        List<AccountInfo> data = new ArrayList<>();
         
         //System.out.println("You entered: " + fileName); to make sure the correct file is being read in
         //String fileName = "C:\\Users\\Josh\\OneDrive - The University of Texas at Dallas\\Desktop\\coding projects\\SignaPayOA\\sgpOA\\src\\smallsample.csv";
@@ -40,7 +40,7 @@ public class fileReader {
                 String description = fields[4].trim();
 
                 // Create and add the Transactions object
-                Transactions transaction = new Transactions(accountName, cardNumber, transactionAmount, transactionType, description, targetCardNumber);
+                AccountInfo transaction = new AccountInfo(accountName, cardNumber, transactionAmount, transactionType, description, targetCardNumber);
                 data.add(transaction);
                 fileRead=true;
             }
