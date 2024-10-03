@@ -45,7 +45,7 @@ A Node.js application for processing transactions from CSV files with a RESTful 
    http-server
    ```
 
-2. Open your browser and navigate to [http://localhost:8081](http://localhost:3001) to access the application.
+3. Open your browser and navigate to [http://localhost:8081](http://localhost:3001) to access the application.
 
 ## API Endpoints
 
@@ -68,4 +68,4 @@ Retrieve all bad transactions (transactions with missing fields).
 Clear all data from the system (transactions, cards, and accounts).
 
 - **Response**: Success message confirming data reset.
-```
+
