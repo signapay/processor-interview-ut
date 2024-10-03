@@ -13,5 +13,12 @@ File input, Reads transaction data from any user provided CSV with error handlin
 \
 Reset Functionality, allows the system to be reset for a new blank state. \ 
 \
+## How it works
+The application processes transactions such as Credit, Debit, and Transfer from a CSV file provided by the user. Each transaction updates account balances, and invalid transactions are flagged as "bad transactions." Users can generate reports to view account balances, identify accounts with negative balances, and review any bad transactions.\ 
+\
+
+## How to run
+Compile the application by running javac App.java AccountManager.java Transactions.java fileReader.java in your terminal. Once compiled, execute the program with java App, follow the menu options to process a transaction file, generate reports, reset the system, or exit.\
+\
 
 
