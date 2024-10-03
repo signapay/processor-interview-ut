@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Processor</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Transaction Processor</h1>
+        </header>
+        <main>
+            <section class="upload-section">
+                <h2>Upload File</h2>
+                <div class="file-upload-container">
+                    <input type="file" id="fileInput" class="file-input">
+                    <label for="fileInput" class="custom-file-label"><i class="fas fa-file-upload"></i> Choose File</label>
+                    <button id="uploadBtn"><i class="fas fa-upload"></i> Upload</button>
+                </div>
+            </section>
+            <section class="actions-section">
+                <div class="button-container">
+                    <button id="resetBtn" class="green-button"><i class="fas fa-redo"></i> Reset</button>
+                    <button id="accountsBtn"><i class="fas fa-user"></i> Accounts</button>
+                    <button id="collectionsBtn"><i class="fas fa-money-bill"></i> Collections</button>
+                    <button id="badTransactionsBtn" class="red-button"><i class="fas fa-exclamation-triangle"></i> Bad Transactions</button>
+                </div>
+            </section>
+            <section class="table-section">
+                <h2>Accounts</h2>
+                <table id="accountsTable">
+                    <thead>
+                        <tr>
+                            <th>Account Names</th>
+                            <th>Card Number</th>
+                            <th>Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be populated here -->
+                    </tbody>
+                </table>
+                <div class="pagination-section" id="accountsPagination">
+                    <button id="prevAccountsPageBtn"><i class="fas fa-arrow-left"></i> Previous Page</button>
+                    <span id="accountsPageInfo">Page 1 of 1</span>
+                    <button id="nextAccountsPageBtn"><i class="fas fa-arrow-right"></i> Next Page</button>
+                </div>
+            </section>
+            <section class="table-section">
+                <h2>Collections</h2>
+                <table id="collectionsTable">
+                    <thead>
+                        <tr>
+                            <th>Account Name</th>
+                            <th>Card Number</th>
+                            <th>Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be populated here -->
+                    </tbody>
+                </table>
+                <div class="pagination-section" id="collectionsPagination">
+                    <button id="prevCollectionsPageBtn"><i class="fas fa-arrow-left"></i> Previous Page</button>
+                    <span id="collectionsPageInfo">Page 1 of 1</span>
+                    <button id="nextCollectionsPageBtn"><i class="fas fa-arrow-right"></i> Next Page</button>
+                </div>
+            </section>
+            <section class="table-section">
+                <h2>Bad Transactions</h2>
+                <table id="badTransactionsTable">
+                    <thead>
+                        <tr>
+                            <th>Account Name</th>
+                            <th>Card Number</th>
+                            <th>Transaction Amount</th>
+                            <th>Transaction Type</th>
+                            <th>Description</th>
+                            <th>Target Card Number</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be populated here -->
+                    </tbody>
+                </table>
+                <div class="pagination-section" id="badTransactionsPagination">
+                    <button id="prevBadTransactionsPageBtn"><i class="fas fa-arrow-left"></i> Previous Page</button>
+                    <span id="badTransactionsPageInfo">Page 1 of 1</span>
+                    <button id="nextBadTransactionsPageBtn"><i class="fas fa-arrow-right"></i> Next Page</button>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

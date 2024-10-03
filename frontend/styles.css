@@ -1,0 +1,153 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    padding: 20px 0;
+    background-color: #333;
+    color: #fff;
+    border-radius: 8px;
+}
+
+h1 {
+    margin: 0;
+}
+
+main {
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+section {
+    margin-bottom: 20px;
+}
+
+h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.upload-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.file-upload-container {
+    display: flex;
+    align-items: center;
+}
+
+button, .custom-file-label {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease;
+    margin-left: 10px; /* Add margin to separate buttons */
+    justify-content: center; /* Center the content */
+}
+
+button {
+    width: 150px; /* Set a fixed width for buttons */
+}
+
+.custom-file-label {
+    width: 120px; /* Set a smaller fixed width for the "Choose File" button */
+    padding: 8px 16px; /* Adjust padding to make it smaller */
+}
+
+button i, .custom-file-label i {
+    margin-right: 8px;
+}
+
+button:hover, .custom-file-label:hover {
+    background-color: #0056b3;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.green-button {
+    background-color: #28a745; /* Green color */
+}
+
+.green-button:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+.red-button {
+    background-color: #dc3545; /* Red color */
+}
+
+.red-button:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
+
+.custom-file-label {
+    display: inline-block;
+}
+
+.file-input {
+    display: none;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background-color: #f4f4f4;
+}
+
+.hidden {
+    display: none;
+}
+
+.pagination-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.pagination-section.hidden {
+    display: none;
+}
+
+.pagination-section button {
+    margin: 0 10px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
