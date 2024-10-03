@@ -22,7 +22,7 @@ A Node.js application for processing transactions from CSV files with a RESTful 
 1. Clone the repository:
 
    ```sh
-   git clone https://github.com/yourusername/transaction-processor.git
+   git clone https://github.com/tesla07/processor-interview-ut.git
    cd transaction-processor
 
 2. Install dependencies for backend:
