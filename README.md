@@ -25,7 +25,7 @@ A Node.js application for processing transactions from CSV files with a RESTful 
    git clone https://github.com/tesla07/processor-interview-ut.git
    cd transaction-processor
 
-2. Install dependencies for backend:
+2. Install dependencies for backend and frontend:
    ```bash
    npm install
    npm install http-server
