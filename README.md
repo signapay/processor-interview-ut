@@ -63,7 +63,7 @@ Retrieve all collections of accounts with negative balance.
 
 Retrieve all bad transactions (transactions with missing fields).
 
-### Reset System: `POST /api/reset`
+### Reset System: `POST /reset`
 
 Clear all data from the system (transactions, cards, and accounts).
 
