@@ -1,0 +1,50 @@
+# Python files and directories
+__pycache__/
+*.py[cod]
+*.env
+.venv/
+venv/
+ENV/
+env/
+
+# Docker files and directories
+*.log
+docker-compose.override.yml
+.DS_Store
+
+# Flask specific
+instance/
+.flaskenv
+
+# Python virtual environment
+.venv/
+venv/
+
+# Redis data (if any)
+dump.rdb
+
+# Ignore all local configurations
+.env
+.env.*
+
+# Node.js directories and files
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# React build directory
+build/
+
+# Coverage directories and reports
+coverage/
+.nyc_output/
+.coverage
+
+# IDE and editor specific files
+.vscode/
+.idea/
+
+# OS generated files
+Thumbs.db
+.DS_Store
