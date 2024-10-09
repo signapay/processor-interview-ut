@@ -1,0 +1,40 @@
+# version: '3.8'
+services:
+  web:
+    build:
+      context: ./backend                # Build context for backend is now relative to root
+      dockerfile: Dockerfile             # Dockerfile for backend service is in backend folder
+    container_name: flask-app
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app/backend           # Enable live updates for backend
+    depends_on:
+      - redis
+    environment:
+      - FLASK_ENV=development
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+
+  frontend:
+    build:
+      context: ./frontend                # Build context for frontend is relative to root
+      dockerfile: Dockerfile             # Dockerfile for frontend service is in frontend folder
+      target: dev
+    container_name: react-app
+    ports:
+      - "3000:3000"
+      # - "3000:80"                        # Map host port 3000 to container port 80 (Nginx)
+    # depends_on:
+    #   - web
+    volumes:
+      - ./frontend:/app                  # Mount the frontend folder for live updates
+      - /app/node_modules                # Prevent conflicts with local node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true         # Enable polling for file changes in Docker
+
+  redis:
+    image: "redis:latest"
+    container_name: redis-server
+    ports:
+      - "6379:6379"
