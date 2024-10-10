@@ -41,12 +41,12 @@ function BadTransactionsComponent({ refreshTrigger }) {
             <Table aria-label="bad transactions table">
               <TableHead>
                 <TableRow>
-                  <TableCell align="left">Account Name</TableCell>
-                  <TableCell align="left">Card Number</TableCell>
-                  <TableCell align="left">Description</TableCell>
-                  <TableCell align="left">Target Card Number</TableCell>
-                  <TableCell align="left">Transaction Amount</TableCell>
-                  <TableCell align="right">Transaction Type</TableCell>
+                  <TableCell align="left" sx={{ fontWeight: 'bold'}}>Account Name</TableCell>
+                  <TableCell align="left" sx={{ fontWeight: 'bold'}}>Card Number</TableCell>
+                  <TableCell align="left" sx={{ fontWeight: 'bold'}}>Description</TableCell>
+                  <TableCell align="left" sx={{ fontWeight: 'bold'}}>Target Card Number</TableCell>
+                  <TableCell align="left" sx={{ fontWeight: 'bold'}}>Transaction Amount</TableCell>
+                  <TableCell align="right" sx={{ fontWeight: 'bold'}}>Transaction Type</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -58,16 +58,16 @@ function BadTransactionsComponent({ refreshTrigger }) {
                       <TableCell component="th" scope="row">
                         {transaction["Account Name"]}
                       </TableCell>
-                      <TableCell align="left">
+                      <TableCell align="left" >
                         {transaction["Card Number"]} 
                       </TableCell>
-                      <TableCell align="left">
+                      <TableCell align="left" >
                         {transaction["Description"]} 
                       </TableCell>
-                      <TableCell align="left">
+                      <TableCell align="left" >
                         {transaction["Target Card Number"] ? transaction["Target Card Number"] : "-"}
                       </TableCell>
-                      <TableCell align="left">
+                      <TableCell align="left" >
                         ${parseFloat(transaction["Transaction Amount"]).toFixed(2)} 
                       </TableCell>
                       <TableCell align="right">

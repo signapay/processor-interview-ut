@@ -41,9 +41,9 @@ function GetCollectionsComponent({ refreshTrigger }) {
             <Table aria-label="get collections table">
               <TableHead>
                 <TableRow>
-                  <TableCell align="left">Account Name</TableCell>
-                  <TableCell align="left">Card Number</TableCell>
-                  <TableCell align="right">Balance</TableCell>
+                  <TableCell align="left" sx={{ fontWeight: 'bold'}}>Account Name</TableCell>
+                  <TableCell align="left" sx={{ fontWeight: 'bold'}}>Card Number</TableCell>
+                  <TableCell align="right" sx={{ fontWeight: 'bold'}}>Balance</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

@@ -71,6 +71,7 @@ def get_reports():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
 @routes.route('/collections', methods=['GET'])
 def get_collections():
     try:
