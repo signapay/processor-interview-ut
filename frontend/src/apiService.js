@@ -6,7 +6,6 @@ const API_URL = "http://localhost:5000";  // Flask backend URL
 export const uploadFile = async (file) => {
   const formData = new FormData();
   formData.append("file", file);
-
   const response = await axios.post(`${API_URL}/upload`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -21,7 +20,7 @@ export const getReports = async () => {
   return response.data;
 };
 
-// Fetch the collections (accounts with negative balances)
+// Fetch the collections
 export const getCollections = async () => {
   const response = await axios.get(`${API_URL}/collections`);
   return response.data;
@@ -33,7 +32,7 @@ export const getBadTransactions = async () => {
   return response.data;
 };
 
-// Reset the system (optional endpoint)
+// Reset the system 
 export const resetSystem = async () => {
   const response = await axios.post(`${API_URL}/reset`);
   return response.data;

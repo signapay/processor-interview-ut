@@ -1,6 +1,5 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
 from redis import Redis
 from routes import routes
 import pandas as pd
@@ -11,10 +10,6 @@ app = Flask(__name__)
 CORS(app)
 app.register_blueprint(routes)
 
-# Configurations
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///transactions.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 
 # Initialize Redis
 redis_client = Redis(host='localhost', port=6379, decode_responses=True)
