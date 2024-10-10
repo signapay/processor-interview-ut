@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+   <title>Signa Pay Assessment</title>
+</head>
+<body>
+   <nav>
+       <div class="nav_container">
+           <div class="nav_title_container">
+               <h1 class="nav_title">Transaction Processing System</h1>
+           </div>
+       </div>
+   </nav>
+
+   <header>
+       <div class="header_container">
+           <div class="header_row">
+               <form id="uploadForm" enctype="multipart/form-data">
+                   <input type="file" id="file_input" class="file-input" />
+                   <div class="buttons_files_container">
+                       <label for="file_input" class="upload_file">Upload Transaction File</label>
+                       <button type="submit" class="submit_file">Process Transactions</button>
+                       <p id="fileStatus" class="fileStatus"></p>
+                   </div>
+               </form>
+               <div class="reset_buttons_container">
+                   <button onclick="clearCache()" class="reset_cache">Clear Cache</button>
+                   <button onclick="clearTables()" class="reset_tables">Clear Tables</button>
+                   <button onclick="clearCache(); resetDatabase(); clearTables();" class="reset_system">Reset System</button>
+               </div>
+           </div>
+       </div>
+   </header>
+
+   <section id="data_section">
+       <div class="transaction_title_container">
+           <h1 class="transaction_title">All Transactions</h1>
+       </div>
+       <div id="allTransactionsContainer" class="all_transactions_container">
+           <table border="1" id="transactionsTable" class="transactions_table">
+               <thead>
+                   <tr>
+                       <th>Account Name</th>
+                       <th>Card Number</th>
+                       <th>Amount</th>
+                       <th>Type</th>
+                       <th>Description</th>
+                       <th>Target Card</th>
+                   </tr>
+               </thead>
+               <tbody id="transactionsBody"></tbody>
+           </table>
+       </div>
+
+       <div class="transaction_title_container">
+           <h1 class="transaction_title">Collections</h1>
+       </div>
+       <div id="collectionsContainer" class="collections_container">
+           <table border="1" id="collectionsTable" class="transactions_table">
+               <thead>
+                   <tr>
+                       <th>Account Name</th>
+                       <th>Card Number</th>
+                       <th>Amount</th>
+                       <th>Type</th>
+                       <th>Description</th>
+                       <th>Target Card</th>
+                   </tr>
+               </thead>
+               <tbody id="collectionsBody"></tbody>
+           </table>
+       </div>
+
+       <div class="transaction_title_container">
+           <h1 class="transaction_title">Bad Transactions</h1>
+       </div>
+       <div id="badTransactionsContainer" class="bad_transactions_container">
+           <table border="1" id="badTransactionsTable" class="transactions_table">
+               <thead>
+                   <tr>
+                       <th>Account Name</th>
+                       <th>Card Number</th>
+                       <th>Amount</th>
+                       <th>Type</th>
+                       <th>Description</th>
+                       <th>Target Card</th>
+                   </tr>
+               </thead>
+               <tbody id="badTransactionsBody"></tbody>
+           </table>
+       </div>
+   </section>
+
+   <footer>
+       <p>Project for Signa Pay. Designed and Developed by Ezaan Babar</p>
+   </footer>
+   <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
