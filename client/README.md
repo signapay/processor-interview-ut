@@ -48,6 +48,8 @@ This will run the app in development mode and open http://localhost:3000 in your
 
 - The screenshot displays a logged-in interface with a "Choose File" button for selecting a transaction file, followed by action buttons for "Upload Transactions," "Get Account Balances," "Get Collections," "Get Bad Transactions," and "Reset System" to manage and process the transaction data.
 
+- Screenshots
+
 <img width="1285" alt="image" src="https://github.com/user-attachments/assets/80a0e0ca-7c74-4d4f-99a4-33b3cd110a10">
 
 <img width="1265" alt="image" src="https://github.com/user-attachments/assets/88c1d403-636e-4df7-bc2d-29b2ac6d59c2">
